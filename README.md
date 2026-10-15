@@ -1,17 +1,10 @@
 # Movie Analyser
 
-Film inceleme ve puanlama platformu projesi (Letterboxd klonu)
+Film inceleme ve puanlama platformu projesi
 
 ## Proje Hakkında
 
 Bu proje, kullanıcıların filmleri inceleyip puanlayabileceği, listeler oluşturabileceği ve diğer kullanıcıların değerlendirmelerini görebileceği bir web platformudur.
-
-## Teknolojiler
-
-- Java
-- Jakarta EE
-- Payara Micro
-- Maven
 
 ## Proje Yapısı
 
@@ -53,12 +46,3 @@ Proje katmanlı mimari (Layered Architecture) kullanmaktadır:
 3. **Service Katmanı**: İş mantığının bulunduğu katman
 4. **Controller Katmanı**: HTTP isteklerini karşılayan servlet/REST endpoint'ler
 5. **DTO Katmanı**: Katmanlar arası veri transferi için kullanılan sınıflar
-
-## Geliştirme
-
-Proje geliştirme aşamasındadır.
-
-## Ekip
-
-- Şeyma Videniz
-- [Ekip arkadaşı]
