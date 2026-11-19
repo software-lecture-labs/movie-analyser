@@ -43,6 +43,9 @@ movie-analyser/
 │   │   │           ├── dto/           # Katmanlar arası veri transferi (record)
 │   │   │           ├── mapper/        # Entity ve DTO dönüşümleri
 │   │   │           └── exception/     # Hata sınıfları ve hata eşleyicileri
+│   │   ├── resources/
+│   │   │   └── META-INF/
+│   │   │       └── microprofile-config.properties  # Veritabanı bağlantı ayarları
 │   │   └── webapp/
 │   │       ├── WEB-INF/
 │   │       │   ├── web.xml            # Web uygulama yapılandırması
@@ -52,6 +55,11 @@ movie-analyser/
 │   │       └── images/                # Görseller
 │   └── test/
 │       └── java/                      # Test sınıfları
+├── docker/
+│   └── mongo/
+│       └── init-user.js               # Uygulama kullanıcısını oluşturan betik
+├── docker-compose.yml                 # Yerel MongoDB
+├── .env.example                       # Ortam değişkenleri şablonu
 └── pom.xml                            # Maven yapılandırması
 ```
 
@@ -80,7 +88,46 @@ Gereksinimler (Windows ve macOS):
 - Docker Desktop
 - Git
 
-Kurulum adımları: Geliştirme aşamasında.
+### 1. Ortam değişkenleri
+
+`.env.example` dosyasını `.env` adıyla kopyalayın ve şifreleri değiştirin. `.env` dosyası repoya gönderilmez.
+
+```bash
+# macOS / Linux
+cp .env.example .env
+```
+
+```powershell
+# Windows (PowerShell)
+Copy-Item .env.example .env
+```
+
+### 2. Veritabanı
+
+MongoDB, Docker Compose ile tek düğümlü bir replica set olarak çalışır. Replica set, birden fazla belgeyi tek transaction içinde güncelleyebilmek için gereklidir.
+
+```bash
+docker compose up -d
+docker compose ps    # STATUS sütununda "healthy" görünmeli
+```
+
+İlk çalıştırmada uygulama kullanıcısı (`DB_USER`) yalnızca `DB_NAME` veritabanına erişim yetkisiyle otomatik oluşturulur.
+
+> Bilgisayarınızda kurulu bir MongoDB servisi 27017 portunu kullanıyorsa `.env` içindeki `DB_PORT` değerini değiştirin (örneğin `27018`).
+
+### 3. Ortam değişkenlerini kabuğa yükleme
+
+Uygulama bağlantı bilgilerini ortam değişkenlerinden okur. Uygulamayı başlatacağınız terminalde:
+
+```bash
+# macOS / Linux
+set -a; source .env; set +a
+```
+
+```powershell
+# Windows (PowerShell)
+Get-Content .env | Where-Object { $_ -match '^[A-Z_]+=' } | ForEach-Object { $k, $v = $_ -split '=', 2; Set-Item "env:$k" $v }
+```
 
 ## Çalıştırma
 
