@@ -1,0 +1,16 @@
+# Keep LF in the repository so Windows and macOS checkouts behave the same
+* text=auto eol=lf
+
+# Windows-only scripts need CRLF to run correctly
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files are never converted
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.war binary
