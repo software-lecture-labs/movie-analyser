@@ -18,9 +18,10 @@ Her kullanıcı bir filme 1 ile 10 arasında puan verip yorum yazabilir. Filmin 
 ## Teknolojiler
 
 - Java 21
-- Jakarta EE 10 (JAX-RS, CDI, JPA, Bean Validation, JTA)
+- Jakarta EE 10 (JAX-RS, CDI, Bean Validation)
+- Jakarta NoSQL (Eclipse JNoSQL)
 - Payara Micro 6
-- MySQL 8 (Docker Compose ile)
+- MongoDB 8 (Docker Compose ile, transaction desteği için tek düğümlü replica set)
 - Maven
 - JUnit 5 ve Mockito
 
@@ -33,18 +34,15 @@ movie-analyser/
 │   │   ├── java/
 │   │   │   └── com/
 │   │   │       └── movieanalyser/
-│   │   │           ├── config/        # Uygulama yapılandırması (REST, veri kaynağı)
+│   │   │           ├── config/        # Uygulama yapılandırması (REST, veritabanı bağlantısı)
 │   │   │           ├── controller/    # Sunum katmanı (JAX-RS REST endpoint'leri)
 │   │   │           ├── service/       # İş mantığı arayüzleri
 │   │   │           │   └── impl/      # İş mantığı uygulamaları
-│   │   │           ├── repository/    # Veri erişim katmanı (JPA)
-│   │   │           ├── entity/        # JPA entity sınıfları
+│   │   │           ├── repository/    # Veri erişim katmanı (Jakarta NoSQL)
+│   │   │           ├── entity/        # MongoDB belge (document) sınıfları
 │   │   │           ├── dto/           # Katmanlar arası veri transferi (record)
 │   │   │           ├── mapper/        # Entity ve DTO dönüşümleri
 │   │   │           └── exception/     # Hata sınıfları ve hata eşleyicileri
-│   │   ├── resources/
-│   │   │   └── META-INF/
-│   │   │       └── persistence.xml    # JPA yapılandırması
 │   │   └── webapp/
 │   │       ├── WEB-INF/
 │   │       │   ├── web.xml            # Web uygulama yapılandırması
@@ -68,7 +66,7 @@ Controller  ->  Service (arayüz + impl)  ->  Repository  ->  Entity
 1. **Controller Katmanı**: HTTP isteklerini karşılayan JAX-RS REST endpoint'leri. İstemciye entity değil DTO döner.
 2. **Service Katmanı**: İş mantığının bulunduğu katman. Arayüzler `service`, uygulamalar `service/impl` paketindedir. Transaction sınırları bu katmandadır.
 3. **Repository Katmanı**: Veritabanı işlemlerini yöneten sınıflar. Ortak CRUD işlemleri generic bir temel sınıfta toplanır.
-4. **Entity Katmanı**: Veritabanı tablolarını temsil eden JPA entity sınıfları.
+4. **Entity Katmanı**: MongoDB koleksiyonlarındaki belgeleri temsil eden entity sınıfları.
 5. **DTO ve Mapper**: Katmanlar arası veri transferi için kullanılan record'lar ve entity ile DTO arasındaki dönüşümler.
 
 Bağımlılıklar constructor injection ile verilir.
