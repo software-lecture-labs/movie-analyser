@@ -46,3 +46,7 @@ Proje katmanlı mimari (Layered Architecture) kullanmaktadır:
 3. **Service Katmanı**: İş mantığının bulunduğu katman
 4. **Controller Katmanı**: HTTP isteklerini karşılayan servlet/REST endpoint'ler
 5. **DTO Katmanı**: Katmanlar arası veri transferi için kullanılan sınıflar
+
+## Veritabanı
+
+Veritabanı MongoDB'dir. Bağlantıyı uygulama Jakarta NoSQL (Eclipse JNoSQL) ile açar, bu yüzden sürücü WAR içine paketlenir.

@@ -13,15 +13,68 @@
     <description>Film inceleme ve puanlama platformu</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <jakartaee.version>10.0.0</jakartaee.version>
+        <jnosql.version>1.2.0</jnosql.version>
+        <junit.version>5.10.0</junit.version>
+        <war.plugin.version>3.3.2</war.plugin.version>
+        <surefire.plugin.version>3.6.1</surefire.plugin.version>
+        <payara.micro.plugin.version>2.6.0</payara.micro.plugin.version>
+        <payara.micro.version>6.2025.11</payara.micro.version>
     </properties>
 
     <dependencies>
+        <!-- Jakarta EE API -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>${jakartaee.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta NoSQL / MongoDB -->
+        <dependency>
+            <groupId>org.eclipse.jnosql.databases</groupId>
+            <artifactId>jnosql-mongodb</artifactId>
+            <version>${jnosql.version}</version>
+        </dependency>
+
+        <!-- JUnit (test için) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>movie-analyser</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${war.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>fish.payara.maven.plugins</groupId>
+                <artifactId>payara-micro-maven-plugin</artifactId>
+                <version>${payara.micro.plugin.version}</version>
+                <configuration>
+                    <payaraMicroVersion>${payara.micro.version}</payaraMicroVersion>
+                    <deployWar>true</deployWar>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
