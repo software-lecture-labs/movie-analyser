@@ -24,7 +24,8 @@ services:
         chown 999:999 /etc/mongo-keyfile
         exec docker-entrypoint.sh mongod --replSet rs0 --keyFile /etc/mongo-keyfile --bind_ip_all
     ports:
-      - "${DB_PORT:-27017}:27017"
+      # Bound to localhost only, so the database is not reachable from the local network
+      - "127.0.0.1:${DB_PORT:-27017}:27017"
     volumes:
       - mongodb-data:/data/db
       - ./docker/mongo/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
