@@ -1,0 +1,47 @@
+# Local MongoDB for development. Values come from the .env file.
+# MongoDB runs as a single-node replica set because multi-document
+# transactions are only available on replica sets.
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: movieanalyser-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+      # Read by the init script to create the application user
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    # A replica set with authentication needs a key file; it is generated
+    # inside the container so nothing secret is stored in the repository.
+    entrypoint:
+      - bash
+      - -c
+      - |
+        openssl rand -base64 756 > /etc/mongo-keyfile
+        chmod 400 /etc/mongo-keyfile
+        chown 999:999 /etc/mongo-keyfile
+        exec docker-entrypoint.sh mongod --replSet rs0 --keyFile /etc/mongo-keyfile --bind_ip_all
+    ports:
+      # Bound to localhost only, so the database is not reachable from the local network
+      - "127.0.0.1:${DB_PORT:-27017}:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - ./docker/mongo/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
+    healthcheck:
+      # Initiates the replica set on first run, then reports its status
+      test:
+        - CMD-SHELL
+        - >-
+          mongosh --quiet -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD"
+          --authenticationDatabase admin --eval
+          "try { rs.status().ok } catch (e) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]}).ok }"
+          | grep -q 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mongodb-data:
