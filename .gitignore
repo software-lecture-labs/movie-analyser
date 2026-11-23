@@ -45,3 +45,15 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Local environment files (secrets stay on the machine)
+.env
+.env.*
+!.env.example
+
+# Log directories
+logs/
