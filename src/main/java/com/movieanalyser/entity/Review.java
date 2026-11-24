@@ -1,6 +1,7 @@
 package com.movieanalyser.entity;
 
 import jakarta.nosql.Column;
+import jakarta.nosql.Convert;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 import jakarta.validation.constraints.Max;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Objects;
+import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
 
 /**
  * A user's rating and comment for a movie, stored in the "reviews" collection.
@@ -21,7 +23,9 @@ public class Review {
     public static final int MAX_RATING = 10;
     public static final int MAX_COMMENT_LENGTH = 1000;
 
+    // Exposed as a String, stored as a MongoDB ObjectId so that lookups by id match
     @Id
+    @Convert(ObjectIdConverter.class)
     private String id;
 
     @Column
@@ -42,9 +46,11 @@ public class Review {
     private String movieId;
 
     @Column
+    @Convert(InstantDateConverter.class)
     private Instant createdAt;
 
     @Column
+    @Convert(InstantDateConverter.class)
     private Instant updatedAt;
 
     // The implicit public no-arg constructor is used by the mapping layer to rebuild entities.
