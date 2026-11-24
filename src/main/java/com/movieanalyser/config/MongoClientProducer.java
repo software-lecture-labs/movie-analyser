@@ -12,8 +12,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 /**
  * Exposes the MongoDB driver objects as CDI beans.
  *
- * <p>Jakarta NoSQL keeps its own client internally, so index creation and
- * multi-document transactions need a separate client from the plain driver.
+ * <p>Jakarta NoSQL keeps its own client internally and does not expose it,
+ * so operations it does not cover (index creation, and later session-based
+ * multi-document transactions) use this client from the plain driver.
+ * Writes made through Jakarta NoSQL repositories do not join a driver
+ * session, so transactional writes must go through this client.
  * It reads the same connection settings as Jakarta NoSQL.</p>
  */
 @ApplicationScoped
