@@ -42,6 +42,14 @@
             <version>${jnosql.version}</version>
         </dependency>
 
+        <!-- MicroProfile Config API (Payara Micro provides it at runtime) -->
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>3.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- JUnit (test için) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
