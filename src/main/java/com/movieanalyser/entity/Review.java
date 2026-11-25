@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
 
@@ -65,13 +66,14 @@ public class Review {
         validateComment(comment);
         Objects.requireNonNull(now, "now");
 
+        Instant timestamp = toStoredPrecision(now);
         Review review = new Review();
         review.userId = userId;
         review.movieId = movieId;
         review.rating = rating;
         review.comment = comment;
-        review.createdAt = now;
-        review.updatedAt = now;
+        review.createdAt = timestamp;
+        review.updatedAt = timestamp;
         return review;
     }
 
@@ -85,7 +87,16 @@ public class Review {
 
         this.rating = newRating;
         this.comment = newComment;
-        this.updatedAt = now;
+        this.updatedAt = toStoredPrecision(now);
+    }
+
+    /**
+     * MongoDB stores dates with millisecond precision, while clocks (for example
+     * Instant.now() on Linux) may return micro or nanoseconds. Truncating here keeps
+     * the in-memory value equal to the value read back from the database.
+     */
+    private static Instant toStoredPrecision(Instant value) {
+        return value.truncatedTo(ChronoUnit.MILLIS);
     }
 
     private static void validateRating(int value) {
