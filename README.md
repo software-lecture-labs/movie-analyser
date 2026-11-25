@@ -111,7 +111,7 @@ docker compose up -d
 docker compose ps    # STATUS sütununda "healthy" görünmeli
 ```
 
-İlk çalıştırmada uygulama kullanıcısı (`DB_USER`) yalnızca `DB_NAME` veritabanına erişim yetkisiyle otomatik oluşturulur.
+İlk çalıştırmada uygulama kullanıcısı (`DB_USER`) yalnızca `DB_NAME` veritabanına ve entegrasyon testlerinin kullandığı test veritabanına (`DB_NAME` + `_test`) erişim yetkisiyle otomatik oluşturulur.
 
 > Bilgisayarınızda kurulu bir MongoDB servisi 27017 portunu kullanıyorsa `.env` içindeki `DB_PORT` değerini değiştirin (örneğin `27018`).
 
@@ -139,7 +139,32 @@ Geliştirme aşamasında.
 
 ## Test
 
-Geliştirme aşamasında.
+### Unit testler
+
+```bash
+mvn -B clean verify
+```
+
+Entegrasyon testleri (`*IT`) bu komutta atlanır; MongoDB gerekmez.
+
+### Entegrasyon testleri
+
+Entegrasyon testleri gerçek MongoDB replica set'ine karşı çalışır (transaction ve rollback senaryoları için gereklidir). MongoDB'yi başlatıp ortam değişkenlerini yükledikten sonra (bkz. Kurulum):
+
+```bash
+mvn -B verify -DskipITs=false
+```
+
+Testler uygulamanın veritabanını değil, ayrı bir test veritabanını (`DB_NAME` + `_test`, örneğin `movieanalyser_test`) kullanır. Her test kendi verisini oluşturup sonunda siler, yarıda kalan bir test de uygulama verisinde iz bırakmaz.
+
+**Test veritabanı eklenmeden önce kurulmuş ortamlar için (tek seferlik):** Uygulama kullanıcısının test veritabanı yetkisi, MongoDB volume'u ilk oluşturulurken verilir. Daha önce `docker compose up` çalıştırdıysanız aşağıdaki iki komutu bir kez çalıştırın (Windows PowerShell ve macOS / Linux'ta aynı):
+
+```bash
+docker compose cp docker/mongo/grant-test-db.js mongodb:/tmp/grant-test-db.js
+docker compose exec mongodb sh -c 'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --file /tmp/grant-test-db.js'
+```
+
+Yerel veriyi korumanız gerekmiyorsa `docker compose down -v` ve ardından `docker compose up -d` ile veritabanını sıfırdan kurmak da aynı sonucu verir.
 
 ## Lisans ve Ders Bilgisi
 
