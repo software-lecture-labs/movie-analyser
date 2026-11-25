@@ -54,59 +54,6 @@ public class Movie {
         movie.posterUrl = posterUrl;
         return movie;
     }
-    /**
- * Yeni bir puanı ekler; puan sayısını ve ortalamayı günceller.
- * Puan geçersizse hiçbir şey değişmez.
- */
-public void addRating(int rating) {
-    validateRating(rating);
-    double total = averageRating * ratingCount + rating;
-    ratingCount++;
-    averageRating = total / ratingCount;
-}
-/**
- * Bir puanı değiştirir; puan sayısı aynı kalır, ortalama yeniden hesaplanır.
- * Puanlardan biri geçersizse ya da filmin hiç puanı yoksa hiçbir şey değişmez.
- */
-public void updateRating(int oldRating, int newRating) {
-    validateRating(oldRating);
-    validateRating(newRating);
-    requireRatings();
-    double total = averageRating * ratingCount - oldRating + newRating;
-    averageRating = total / ratingCount;
-}
-/**
- * Bir puanı ortalamadan çıkarır. Son puan çıkarılırsa ortalama sıfıra döner.
- * Puan geçersizse ya da filmin hiç puanı yoksa hiçbir şey değişmez.
- */
-public void removeRating(int rating) {
-    validateRating(rating);
-    requireRatings();
-    if (ratingCount == 1) {
-        ratingCount = 0;
-        averageRating = 0.0;
-        return;
-    }
-    double total = averageRating * ratingCount - rating;
-    ratingCount--;
-    averageRating = total / ratingCount;
-}
-
-private void requireRatings() {
-    if (ratingCount == 0) {
-        throw new IllegalStateException("movie has no ratings");
-    }
-}
-
-
-private static void validateRating(int value) {
-    if (value < Review.MIN_RATING || value > Review.MAX_RATING) {
-        throw new IllegalArgumentException(
-                "rating must be between " + Review.MIN_RATING + " and " + Review.MAX_RATING
-                        + ", was " + value);
-    }
-}
-
 
     public String getId() {
         return id;
