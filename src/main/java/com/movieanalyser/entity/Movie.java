@@ -75,6 +75,22 @@ public void updateRating(int oldRating, int newRating) {
     double total = averageRating * ratingCount - oldRating + newRating;
     averageRating = total / ratingCount;
 }
+/**
+ * Bir puanı ortalamadan çıkarır. Son puan çıkarılırsa ortalama sıfıra döner.
+ * Puan geçersizse ya da filmin hiç puanı yoksa hiçbir şey değişmez.
+ */
+public void removeRating(int rating) {
+    validateRating(rating);
+    requireRatings();
+    if (ratingCount == 1) {
+        ratingCount = 0;
+        averageRating = 0.0;
+        return;
+    }
+    double total = averageRating * ratingCount - rating;
+    ratingCount--;
+    averageRating = total / ratingCount;
+}
 
 private void requireRatings() {
     if (ratingCount == 0) {

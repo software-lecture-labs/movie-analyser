@@ -96,4 +96,46 @@ void updateRatingFailsWhenMovieHasNoRatings() {
 
     assertThrows(IllegalStateException.class, () -> movie.updateRating(5, 6));
 }
+
+@Test
+void removeRatingRecalculatesAverage() {
+    Movie movie = newMovie();
+    movie.addRating(8);
+    movie.addRating(6);
+    movie.addRating(10);
+
+    movie.removeRating(10);
+
+    assertEquals(2, movie.getRatingCount());
+    assertEquals(7.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void removeLastRatingResetsAverageToZero() {
+    Movie movie = newMovie();
+    movie.addRating(7);
+
+    movie.removeRating(7);
+
+    assertEquals(0, movie.getRatingCount());
+    assertEquals(0.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void removeRatingRejectsInvalidRatingAndKeepsState() {
+    Movie movie = newMovie();
+    movie.addRating(8);
+
+    assertThrows(IllegalArgumentException.class, () -> movie.removeRating(0));
+
+    assertEquals(1, movie.getRatingCount());
+    assertEquals(8.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void removeRatingFailsWhenMovieHasNoRatings() {
+    Movie movie = newMovie();
+
+    assertThrows(IllegalStateException.class, () -> movie.removeRating(5));
+}
 }
