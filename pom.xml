@@ -24,6 +24,10 @@
         <surefire.plugin.version>3.6.1</surefire.plugin.version>
         <payara.micro.plugin.version>2.6.0</payara.micro.plugin.version>
         <payara.micro.version>6.2025.11</payara.micro.version>
+        <mockito.version>5.17.0</mockito.version>
+        <failsafe.plugin.version>3.5.6</failsafe.plugin.version>
+        <!-- Integration tests (*IT) need a running MongoDB; run them with -DskipITs=false -->
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencies>
@@ -55,6 +59,14 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito: test doubles in unit tests -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -90,7 +102,7 @@
                 <configuration>
                     <targetJdk>21</targetJdk>
                     <rulesets>
-                        <ruleset>/rulesets/java/quickstart.xml</ruleset>
+                        <ruleset>config/pmd/ruleset.xml</ruleset>
                     </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
@@ -108,6 +120,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.plugin.version}</version>
+            </plugin>
+
+            <!-- Runs *IT classes in the integration-test phase -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

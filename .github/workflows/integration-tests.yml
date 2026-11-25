@@ -1,0 +1,41 @@
+# Runs the *IT tests against the same MongoDB replica set used for local development
+name: integration-tests
+
+on:
+  pull_request:
+    branches: [dev, main]
+    # "edited" re-runs the check when the target branch of a PR is changed
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  integration-tests:
+    name: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Start MongoDB
+        run: |
+          cp .env.example .env
+          docker compose up -d --wait
+
+      - name: Run unit and integration tests
+        run: |
+          set -a
+          . ./.env
+          set +a
+          mvn -B verify -DskipITs=false
+
+      - name: Show MongoDB logs on failure
+        if: failure()
+        run: docker compose logs mongodb
