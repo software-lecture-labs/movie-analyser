@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class RestApplicationTest {
 
     @Test
-    void applicationPath_isApi() {
+    void applicationPathIsApi() {
         ApplicationPath path = RestApplication.class.getAnnotation(ApplicationPath.class);
 
         assertEquals("/api", path.value());

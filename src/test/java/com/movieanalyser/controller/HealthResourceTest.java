@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 class HealthResourceTest {
 
     @Test
-    void health_returnsUpStatus() {
+    void healthReturnsUpStatus() {
         HealthResponse response = new HealthResource().health();
 
         assertEquals("UP", response.status());
     }
 
     @Test
-    void health_isMappedToGetOnHealthPath() throws NoSuchMethodException {
+    void healthIsMappedToGetOnHealthPath() throws NoSuchMethodException {
         Path path = HealthResource.class.getAnnotation(Path.class);
 
         assertEquals("/health", path.value());
