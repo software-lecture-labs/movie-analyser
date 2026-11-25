@@ -102,6 +102,27 @@ class ReviewTest {
     }
 
     @Test
+    void createTruncatesTimestampsToMilliseconds() {
+        // Clocks on Linux report microseconds or nanoseconds; BSON dates keep milliseconds
+        Instant precise = Instant.parse("2026-11-25T10:00:00.123456789Z");
+        Instant millis = Instant.parse("2026-11-25T10:00:00.123Z");
+
+        Review review = Review.create(USER_ID, MOVIE_ID, 5, null, precise);
+
+        assertEquals(millis, review.getCreatedAt());
+        assertEquals(millis, review.getUpdatedAt());
+    }
+
+    @Test
+    void editTruncatesUpdatedAtToMilliseconds() {
+        Review review = Review.create(USER_ID, MOVIE_ID, 5, null, CREATED);
+
+        review.edit(6, null, Instant.parse("2026-11-26T12:30:00.987654Z"));
+
+        assertEquals(Instant.parse("2026-11-26T12:30:00.987Z"), review.getUpdatedAt());
+    }
+
+    @Test
     void editRejectsInvalidRatingAndKeepsState() {
         Review review = Review.create(USER_ID, MOVIE_ID, 8, "Great movie", CREATED);
 
