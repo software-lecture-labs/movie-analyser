@@ -9,10 +9,12 @@ set -euo pipefail
 readonly JAVA_LIMIT=500
 readonly OTHER_LIMIT=1000
 
+# core.quotePath=false keeps non-ASCII file names (for example Turkish characters)
+# readable; otherwise git quotes them and the files would be skipped silently.
 if [ $# -gt 0 ]; then
-  files=$(git diff --name-only --diff-filter=ACMR "$1...HEAD")
+  files=$(git -c core.quotePath=false diff --name-only --diff-filter=ACMR "$1...HEAD")
 else
-  files=$(git ls-files)
+  files=$(git -c core.quotePath=false ls-files)
 fi
 
 failed=0
