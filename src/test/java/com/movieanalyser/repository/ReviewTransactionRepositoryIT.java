@@ -154,6 +154,32 @@ class ReviewTransactionRepositoryIT {
     }
 
     @Test
+    void updateRollsBackWhenMovieIsMissing() {
+        String id = repository.add(review(newUserId(), 8));
+        movies.deleteOne(Filters.eq("_id", movieId));
+        Instant later = NOW.plusSeconds(60);
+
+        assertThrows(NotFoundException.class, () -> repository.update(id, 2, "changed", later));
+
+        // The review was updated before the movie lookup failed; the abort restored it
+        Document stored = reviews.find(Filters.eq("_id", new ObjectId(id))).first();
+        assertNotNull(stored);
+        assertEquals(8, stored.getInteger("rating"));
+        assertEquals("comment 8", stored.getString("comment"));
+    }
+
+    @Test
+    void deleteRollsBackWhenMovieIsMissing() {
+        String id = repository.add(review(newUserId(), 8));
+        movies.deleteOne(Filters.eq("_id", movieId));
+
+        assertThrows(NotFoundException.class, () -> repository.delete(id));
+
+        // The review was deleted before the movie lookup failed; the abort brought it back
+        assertNotNull(reviews.find(Filters.eq("_id", new ObjectId(id))).first());
+    }
+
+    @Test
     void deleteOfMissingReviewIsNotFound() {
         String missingId = new ObjectId().toHexString();
 
