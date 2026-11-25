@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="movie-analyser"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        PMD quickstart rules. The only change: integration test classes named *IT
+        (run by Failsafe) are accepted as test classes, next to *Test.
+    </description>
+
+    <rule ref="rulesets/java/quickstart.xml">
+        <exclude name="ClassNamingConventions"/>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+        <properties>
+            <property name="testClassPattern" value="^Test.*$|^[A-Z][a-zA-Z0-9]*(Test(s|Case)?|IT)$"/>
+        </properties>
+    </rule>
+</ruleset>
