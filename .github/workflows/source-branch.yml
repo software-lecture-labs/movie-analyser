@@ -1,0 +1,32 @@
+# Enforces the branch flow: feature -> dev -> main
+name: source-branch
+
+on:
+  pull_request:
+    branches: [dev, main]
+    # "edited" re-runs the check when the target branch of a PR is changed
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  source-branch:
+    name: source-branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source and target branches
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "Pull request: $HEAD_BRANCH -> $BASE_BRANCH"
+          if [ "$BASE_BRANCH" = "dev" ] && [ "$HEAD_BRANCH" = "main" ]; then
+            echo "::error::main cannot be merged into dev. Open feature branches from dev instead."
+            exit 1
+          fi
+          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "dev" ]; then
+            echo "::error::Only dev can be merged into main. Open this pull request against dev."
+            exit 1
+          fi
+          echo "Branch flow is valid."
