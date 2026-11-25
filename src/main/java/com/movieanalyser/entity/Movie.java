@@ -54,6 +54,25 @@ public class Movie {
         movie.posterUrl = posterUrl;
         return movie;
     }
+    /**
+ * Yeni bir puanı ekler; puan sayısını ve ortalamayı günceller.
+ * Puan geçersizse hiçbir şey değişmez.
+ */
+public void addRating(int rating) {
+    validateRating(rating);
+    double total = averageRating * ratingCount + rating;
+    ratingCount++;
+    averageRating = total / ratingCount;
+}
+
+private static void validateRating(int value) {
+    if (value < Review.MIN_RATING || value > Review.MAX_RATING) {
+        throw new IllegalArgumentException(
+                "rating must be between " + Review.MIN_RATING + " and " + Review.MAX_RATING
+                        + ", was " + value);
+    }
+}
+
 
     public String getId() {
         return id;

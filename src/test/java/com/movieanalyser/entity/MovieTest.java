@@ -2,7 +2,7 @@ package com.movieanalyser.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 class MovieTest {
@@ -23,4 +23,46 @@ class MovieTest {
         assertEquals(0, movie.getRatingCount());
         assertEquals(0.0, movie.getAverageRating());
     }
+
+private static Movie newMovie() {
+    return Movie.create(
+            "Inception",
+            "Christopher Nolan",
+            2010,
+            "A thief enters dreams.",
+            "https://example.com/inception.jpg");
+}
+
+@Test
+void addRatingSetsAverageForFirstRating() {
+    Movie movie = newMovie();
+
+    movie.addRating(8);
+
+    assertEquals(1, movie.getRatingCount());
+    assertEquals(8.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void addRatingUpdatesAverageForSeveralRatings() {
+    Movie movie = newMovie();
+
+    movie.addRating(8);
+    movie.addRating(6);
+    movie.addRating(9);
+
+    assertEquals(3, movie.getRatingCount());
+    assertEquals(7.6667, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void addRatingRejectsRatingOutOfRange() {
+    Movie movie = newMovie();
+
+    assertThrows(IllegalArgumentException.class, () -> movie.addRating(0));
+    assertThrows(IllegalArgumentException.class, () -> movie.addRating(11));
+
+    assertEquals(0, movie.getRatingCount());
+    assertEquals(0.0, movie.getAverageRating(), 0.0001);
+}
 }
