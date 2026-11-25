@@ -64,6 +64,24 @@ public void addRating(int rating) {
     ratingCount++;
     averageRating = total / ratingCount;
 }
+/**
+ * Bir puanı değiştirir; puan sayısı aynı kalır, ortalama yeniden hesaplanır.
+ * Puanlardan biri geçersizse ya da filmin hiç puanı yoksa hiçbir şey değişmez.
+ */
+public void updateRating(int oldRating, int newRating) {
+    validateRating(oldRating);
+    validateRating(newRating);
+    requireRatings();
+    double total = averageRating * ratingCount - oldRating + newRating;
+    averageRating = total / ratingCount;
+}
+
+private void requireRatings() {
+    if (ratingCount == 0) {
+        throw new IllegalStateException("movie has no ratings");
+    }
+}
+
 
 private static void validateRating(int value) {
     if (value < Review.MIN_RATING || value > Review.MAX_RATING) {

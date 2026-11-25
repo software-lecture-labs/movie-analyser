@@ -65,4 +65,35 @@ void addRatingRejectsRatingOutOfRange() {
     assertEquals(0, movie.getRatingCount());
     assertEquals(0.0, movie.getAverageRating(), 0.0001);
 }
+
+@Test
+void updateRatingRecalculatesAverage() {
+    Movie movie = newMovie();
+    movie.addRating(8);
+    movie.addRating(6);
+
+    movie.updateRating(8, 4);
+
+    assertEquals(2, movie.getRatingCount());
+    assertEquals(5.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void updateRatingRejectsInvalidRatingAndKeepsState() {
+    Movie movie = newMovie();
+    movie.addRating(8);
+
+    assertThrows(IllegalArgumentException.class, () -> movie.updateRating(8, 11));
+    assertThrows(IllegalArgumentException.class, () -> movie.updateRating(0, 5));
+
+    assertEquals(1, movie.getRatingCount());
+    assertEquals(8.0, movie.getAverageRating(), 0.0001);
+}
+
+@Test
+void updateRatingFailsWhenMovieHasNoRatings() {
+    Movie movie = newMovie();
+
+    assertThrows(IllegalStateException.class, () -> movie.updateRating(5, 6));
+}
 }
