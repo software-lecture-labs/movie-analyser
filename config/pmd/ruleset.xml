@@ -5,17 +5,26 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
     <description>
-        PMD quickstart rules. The only change: integration test classes named *IT
-        (run by Failsafe) are accepted as test classes, next to *Test.
+        PMD quickstart rules with two project adjustments: integration test classes
+        named *IT (run by Failsafe) are accepted as test classes, and the MongoDB
+        driver's document type may be used directly.
     </description>
 
     <rule ref="rulesets/java/quickstart.xml">
         <exclude name="ClassNamingConventions"/>
+        <exclude name="LooseCoupling"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml/ClassNamingConventions">
         <properties>
             <property name="testClassPattern" value="^Test.*$|^[A-Z][a-zA-Z0-9]*(Test(s|Case)?|IT)$"/>
+        </properties>
+    </rule>
+
+    <!-- org.bson.Document implements Map, but it is the driver's standard document type -->
+    <rule ref="category/java/bestpractices.xml/LooseCoupling">
+        <properties>
+            <property name="allowedTypes" value="java.util.Properties,org.bson.Document"/>
         </properties>
     </rule>
 </ruleset>
