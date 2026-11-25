@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.movieanalyser.entity.Review;
-import com.movieanalyser.exception.NotFoundException;
-import com.movieanalyser.exception.ValidationException;
+import com.movieanalyser.exception.BusinessRuleException;
+import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
 import java.time.Clock;
@@ -47,21 +47,21 @@ class ReviewServiceImplTest {
 
     @Test
     void addRejectsInvalidMovieIdWithoutTouchingStore() {
-        assertThrows(NotFoundException.class, () -> service.addReview(USER_ID, "abc", 8, null));
+        assertThrows(ResourceNotFoundException.class, () -> service.addReview(USER_ID, "abc", 8, null));
 
         verifyNoInteractions(transactions, reviews);
     }
 
     @Test
     void addRejectsInvalidUserIdWithoutTouchingStore() {
-        assertThrows(NotFoundException.class, () -> service.addReview(null, MOVIE_ID, 8, null));
+        assertThrows(ResourceNotFoundException.class, () -> service.addReview(null, MOVIE_ID, 8, null));
 
         verifyNoInteractions(transactions, reviews);
     }
 
     @Test
-    void addMapsInvalidRatingToValidationException() {
-        assertThrows(ValidationException.class, () -> service.addReview(USER_ID, MOVIE_ID, 11, null));
+    void addMapsInvalidRatingToBusinessRuleException() {
+        assertThrows(BusinessRuleException.class, () -> service.addReview(USER_ID, MOVIE_ID, 11, null));
 
         verifyNoInteractions(transactions, reviews);
     }
@@ -83,7 +83,7 @@ class ReviewServiceImplTest {
 
     @Test
     void updateRejectsInvalidIdWithoutTouchingStore() {
-        assertThrows(NotFoundException.class, () -> service.updateReview("not-an-id", 5, null));
+        assertThrows(ResourceNotFoundException.class, () -> service.updateReview("not-an-id", 5, null));
 
         verifyNoInteractions(transactions, reviews);
     }
@@ -92,7 +92,7 @@ class ReviewServiceImplTest {
     void updateOfMissingReviewIsNotFound() {
         when(reviews.findById(REVIEW_ID)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> service.updateReview(REVIEW_ID, 5, null));
+        assertThrows(ResourceNotFoundException.class, () -> service.updateReview(REVIEW_ID, 5, null));
 
         verifyNoInteractions(transactions);
     }
@@ -112,11 +112,11 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void updateMapsInvalidRatingToValidationException() {
+    void updateMapsInvalidRatingToBusinessRuleException() {
         Review existing = Review.create(USER_ID, MOVIE_ID, 8, "Great", NOW);
         when(reviews.findById(REVIEW_ID)).thenReturn(Optional.of(existing));
 
-        assertThrows(ValidationException.class, () -> service.updateReview(REVIEW_ID, 0, null));
+        assertThrows(BusinessRuleException.class, () -> service.updateReview(REVIEW_ID, 0, null));
 
         verifyNoInteractions(transactions);
     }
@@ -130,7 +130,7 @@ class ReviewServiceImplTest {
 
     @Test
     void deleteRejectsInvalidIdWithoutTouchingStore() {
-        assertThrows(NotFoundException.class, () -> service.deleteReview(""));
+        assertThrows(ResourceNotFoundException.class, () -> service.deleteReview(""));
 
         verifyNoInteractions(transactions, reviews);
     }

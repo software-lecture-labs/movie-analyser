@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 class DomainExceptionsTest {
 
     @Test
-    void notFoundKeepsMessageAndIsUnchecked() {
-        RuntimeException e = new NotFoundException("Movie not found: 42");
+    void resourceNotFoundKeepsMessageAndIsUnchecked() {
+        RuntimeException e = new ResourceNotFoundException("Movie not found: 42");
 
         assertEquals("Movie not found: 42", e.getMessage());
         assertInstanceOf(RuntimeException.class, e);
@@ -24,8 +24,8 @@ class DomainExceptionsTest {
     }
 
     @Test
-    void validationKeepsMessageAndIsUnchecked() {
-        RuntimeException e = new ValidationException("rating must be between 1 and 10");
+    void businessRuleKeepsMessageAndIsUnchecked() {
+        RuntimeException e = new BusinessRuleException("rating must be between 1 and 10");
 
         assertEquals("rating must be between 1 and 10", e.getMessage());
         assertInstanceOf(RuntimeException.class, e);
@@ -35,7 +35,7 @@ class DomainExceptionsTest {
     void causeIsKeptWhenGiven() {
         IllegalArgumentException cause = new IllegalArgumentException("bad");
 
-        assertEquals(cause, new ValidationException("invalid", cause).getCause());
+        assertEquals(cause, new BusinessRuleException("invalid", cause).getCause());
         assertEquals(cause, new ConflictException("duplicate", cause).getCause());
     }
 }

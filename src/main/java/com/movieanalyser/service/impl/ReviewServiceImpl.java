@@ -2,8 +2,8 @@ package com.movieanalyser.service.impl;
 
 import com.movieanalyser.entity.EntityIds;
 import com.movieanalyser.entity.Review;
-import com.movieanalyser.exception.NotFoundException;
-import com.movieanalyser.exception.ValidationException;
+import com.movieanalyser.exception.BusinessRuleException;
+import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
 import com.movieanalyser.service.ReviewService;
@@ -50,7 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review updateReview(String reviewId, int rating, String comment) {
         requireValidId(reviewId, "Review");
         Review review = reviews.findById(reviewId)
-                .orElseThrow(() -> new NotFoundException("Review not found: " + reviewId));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
         applyRules(() -> {
             review.edit(rating, comment, clock.instant());
             return review;
@@ -69,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService {
     /** A malformed id cannot belong to any stored entity, so it is reported as not found. */
     private static void requireValidId(String id, String entityName) {
         if (!EntityIds.isValid(id)) {
-            throw new NotFoundException(entityName + " not found: " + id);
+            throw new ResourceNotFoundException(entityName + " not found: " + id);
         }
     }
 
@@ -78,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             return action.get();
         } catch (IllegalArgumentException e) {
-            throw new ValidationException(e.getMessage(), e);
+            throw new BusinessRuleException(e.getMessage(), e);
         }
     }
 }

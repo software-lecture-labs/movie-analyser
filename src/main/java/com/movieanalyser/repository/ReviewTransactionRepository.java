@@ -11,7 +11,7 @@ import com.mongodb.client.model.Updates;
 import com.movieanalyser.entity.RatingSummary;
 import com.movieanalyser.entity.Review;
 import com.movieanalyser.exception.ConflictException;
-import com.movieanalyser.exception.NotFoundException;
+import com.movieanalyser.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Instant;
@@ -65,7 +65,7 @@ public class ReviewTransactionRepository {
      *
      * @return the id of the stored review
      * @throws ConflictException if the user already reviewed this movie
-     * @throws NotFoundException if the movie does not exist; nothing is stored
+     * @throws ResourceNotFoundException if the movie does not exist; nothing is stored
      */
     public String add(Review review) {
         ObjectId id = new ObjectId();
@@ -95,7 +95,7 @@ public class ReviewTransactionRepository {
     /**
      * Changes the rating and comment of a review and replaces the old rating in the movie's average.
      *
-     * @throws NotFoundException if the review or its movie does not exist
+     * @throws ResourceNotFoundException if the review or its movie does not exist
      */
     public void update(String reviewId, int rating, String comment, Instant updatedAt) {
         inTransaction(session -> {
@@ -113,7 +113,7 @@ public class ReviewTransactionRepository {
     /**
      * Deletes a review and removes its rating from the movie's average.
      *
-     * @throws NotFoundException if the review or its movie does not exist
+     * @throws ResourceNotFoundException if the review or its movie does not exist
      */
     public void delete(String reviewId) {
         inTransaction(session -> {
@@ -135,7 +135,7 @@ public class ReviewTransactionRepository {
     private Document findReview(ClientSession session, String reviewId) {
         Document review = reviews.find(session, byId(reviewId)).first();
         if (review == null) {
-            throw new NotFoundException("Review not found: " + reviewId);
+            throw new ResourceNotFoundException("Review not found: " + reviewId);
         }
         return review;
     }
@@ -143,7 +143,7 @@ public class ReviewTransactionRepository {
     private void changeRating(ClientSession session, String movieId, Function<RatingSummary, RatingSummary> change) {
         Document movie = movies.find(session, byId(movieId)).first();
         if (movie == null) {
-            throw new NotFoundException("Movie not found: " + movieId);
+            throw new ResourceNotFoundException("Movie not found: " + movieId);
         }
         RatingSummary next = change.apply(new RatingSummary(
                 numberOrZero(movie.get(AVERAGE_RATING)).doubleValue(),
