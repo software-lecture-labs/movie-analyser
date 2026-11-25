@@ -1,6 +1,7 @@
 package com.movieanalyser.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mongodb.client.model.IndexModel;
@@ -19,6 +20,25 @@ class MongoIndexesTest {
         // Field order matters for a compound index; the JSON form keeps that order.
         assertEquals(new Document("userId", 1).append("movieId", 1).toJson(), keysOf(index));
         assertTrue(index.getOptions().isUnique());
+    }
+
+    @Test
+    void reviewsHasMovieListingIndexSortedByNewest() {
+        IndexModel index = findByName(MongoIndexes.REVIEWS, "ix_reviews_movie_created");
+
+        // Equality on movieId, then the listing order (newest first, id as tie breaker)
+        assertEquals(new Document("movieId", 1).append("createdAt", -1).append("_id", -1).toJson(),
+                keysOf(index));
+        assertNotEquals(Boolean.TRUE, index.getOptions().isUnique());
+    }
+
+    @Test
+    void reviewsHasUserListingIndexSortedByNewest() {
+        IndexModel index = findByName(MongoIndexes.REVIEWS, "ix_reviews_user_created");
+
+        assertEquals(new Document("userId", 1).append("createdAt", -1).append("_id", -1).toJson(),
+                keysOf(index));
+        assertNotEquals(Boolean.TRUE, index.getOptions().isUnique());
     }
 
     @Test
