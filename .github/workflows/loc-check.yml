@@ -1,0 +1,24 @@
+# Checks line limits of the files changed in the pull request
+name: loc-check
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  loc-check:
+    name: loc-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history is needed to diff against the target branch
+          fetch-depth: 0
+
+      - name: Check line limits
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+        run: bash scripts/check-loc.sh "origin/$BASE_BRANCH"
