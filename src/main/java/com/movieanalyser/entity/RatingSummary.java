@@ -25,7 +25,7 @@ public record RatingSummary(double average, int count) {
     /** The summary after a new rating is added. */
     public RatingSummary add(int rating) {
         int newCount = count + 1;
-        return new RatingSummary((total() + rating) / newCount, newCount);
+        return new RatingSummary((double) (total() + rating) / newCount, newCount);
     }
 
     /** The summary after an existing rating is removed. */
@@ -35,17 +35,22 @@ public record RatingSummary(double average, int count) {
         if (newCount == 0) {
             return empty();
         }
-        return new RatingSummary((total() - rating) / newCount, newCount);
+        return new RatingSummary((double) (total() - rating) / newCount, newCount);
     }
 
     /** The summary after an existing rating is changed; the count stays the same. */
     public RatingSummary replace(int oldRating, int newRating) {
         requireRatings();
-        return new RatingSummary((total() - oldRating + newRating) / count, count);
+        return new RatingSummary((double) (total() - oldRating + newRating) / count, count);
     }
 
-    private double total() {
-        return average * count;
+    /**
+     * The sum of all ratings. Ratings are whole numbers, so the sum is too; rounding
+     * removes the floating point error of average * count, which would otherwise
+     * build up over many changes (4.500000000000001 instead of 4.5).
+     */
+    private long total() {
+        return Math.round(average * count);
     }
 
     private void requireRatings() {

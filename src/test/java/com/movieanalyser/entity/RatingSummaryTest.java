@@ -58,6 +58,41 @@ class RatingSummaryTest {
     }
 
     @Test
+    void longAddRemoveCycleStaysExact() {
+        RatingSummary summary = RatingSummary.empty().add(3).add(4);
+
+        // Many changes must not let rounding errors build up in the stored average
+        for (int i = 0; i < 1000; i++) {
+            summary = summary.add(7).add(9).replace(9, 1).remove(7).remove(1);
+        }
+
+        assertEquals(3.5, summary.average());
+        assertEquals(2, summary.count());
+    }
+
+    @Test
+    void averageHasNoRoundingErrorAfterRemoval() {
+        RatingSummary summary = RatingSummary.empty();
+        for (int rating : new int[] {2, 8, 2, 4, 6, 6, 1}) {
+            summary = summary.add(rating);
+        }
+
+        summary = summary.remove(2);
+
+        // 8 + 2 + 4 + 6 + 6 + 1 = 27 over 6 ratings; must be exactly 4.5, not 4.500000000000001
+        assertEquals(4.5, summary.average());
+        assertEquals(6, summary.count());
+    }
+
+    @Test
+    void thirdsAreExactAfterRemoval() {
+        RatingSummary summary = RatingSummary.empty().add(10).add(10).add(10).add(4).remove(4);
+
+        assertEquals(10.0, summary.average());
+        assertEquals(3, summary.count());
+    }
+
+    @Test
     void removeFromEmptyIsRejected() {
         RatingSummary empty = RatingSummary.empty();
 
