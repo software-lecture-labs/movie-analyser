@@ -1,13 +1,20 @@
 // Runs once, when the data volume is created for the first time.
-// Uygulama kullanıcısını oluşturur; yalnızca uygulama veritabanında ve test veritabanında yetkisi vardır.
-// Test veritabanı (<veritabanı>_test) entegrasyon testleri içindir; uygulama verisine dokunmazlar.
+// Uygulama kullanıcısı yalnızca uygulama veritabanında yetkilidir.
+// Entegrasyon testleri için ayrı bir test kullanıcısı, yalnızca test veritabanında (<veritabanı>_test) yetkilidir.
 const dbName = process.env.MONGO_INITDB_DATABASE;
+const testDbName = dbName + '_test';
 
 db.getSiblingDB(dbName).createUser({
   user: process.env.DB_USER,
   pwd: process.env.DB_PASSWORD,
-  roles: [
-    { role: 'readWrite', db: dbName },
-    { role: 'readWrite', db: dbName + '_test' }
-  ]
+  roles: [{ role: 'readWrite', db: dbName }]
 });
+
+// Sunucu ortamında DB_TEST_USER boş bırakılır ve test kullanıcısı oluşturulmaz
+if (process.env.DB_TEST_USER) {
+  db.getSiblingDB(testDbName).createUser({
+    user: process.env.DB_TEST_USER,
+    pwd: process.env.DB_TEST_PASSWORD,
+    roles: [{ role: 'readWrite', db: testDbName }]
+  });
+}
