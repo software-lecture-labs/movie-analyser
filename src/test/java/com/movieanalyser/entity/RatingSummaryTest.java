@@ -61,7 +61,7 @@ class RatingSummaryTest {
     void longAddRemoveCycleStaysExact() {
         RatingSummary summary = RatingSummary.empty().add(3).add(4);
 
-        // Many changes must not let rounding errors build up in the stored average
+        // Çok sayıda değişiklik, saklanan ortalamada yuvarlama hatası biriktirmemelidir
         for (int i = 0; i < 1000; i++) {
             summary = summary.add(7).add(9).replace(9, 1).remove(7).remove(1);
         }
@@ -79,7 +79,7 @@ class RatingSummaryTest {
 
         summary = summary.remove(2);
 
-        // 8 + 2 + 4 + 6 + 6 + 1 = 27 over 6 ratings; must be exactly 4.5, not 4.500000000000001
+        // 6 puan üzerinden 8 + 2 + 4 + 6 + 6 + 1 = 27; tam olarak 4.5 olmalı, 4.500000000000001 değil
         assertEquals(4.5, summary.average());
         assertEquals(6, summary.count());
     }
