@@ -1,5 +1,5 @@
-// Runs once, when the data volume is created for the first time.
-// Creates the application user with access to the application database only.
+// Veri birimi ilk kez oluşturulduğunda yalnızca bir kez çalışır.
+// Yalnızca uygulama veritabanına erişimi olan uygulama kullanıcısını oluşturur.
 const dbName = process.env.MONGO_INITDB_DATABASE;
 
 db.getSiblingDB(dbName).createUser({
