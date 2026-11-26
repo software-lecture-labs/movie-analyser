@@ -14,7 +14,7 @@ import com.movieanalyser.config.MongoIndexes;
 import com.movieanalyser.entity.EntityIds;
 import com.movieanalyser.entity.Review;
 import com.movieanalyser.exception.ConflictException;
-import com.movieanalyser.exception.NotFoundException;
+import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.support.MongoTestSupport;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ class ReviewTransactionRepositoryIT {
         String missingMovieId = new ObjectId().toHexString();
         Review review = Review.create(newUserId(), missingMovieId, 7, null, NOW);
 
-        assertThrows(NotFoundException.class, () -> repository.add(review));
+        assertThrows(ResourceNotFoundException.class, () -> repository.add(review));
 
         // The review was inserted before the movie lookup failed; the abort removed it
         assertEquals(0, reviews.countDocuments(Filters.eq("movieId", missingMovieId)));
@@ -149,7 +149,7 @@ class ReviewTransactionRepositoryIT {
         String missingId = new ObjectId().toHexString();
         Instant later = NOW.plusSeconds(60);
 
-        assertThrows(NotFoundException.class, () -> repository.update(missingId, 5, null, later));
+        assertThrows(ResourceNotFoundException.class, () -> repository.update(missingId, 5, null, later));
         assertMovie(0.0, 0);
     }
 
@@ -159,7 +159,7 @@ class ReviewTransactionRepositoryIT {
         movies.deleteOne(Filters.eq("_id", movieId));
         Instant later = NOW.plusSeconds(60);
 
-        assertThrows(NotFoundException.class, () -> repository.update(id, 2, "changed", later));
+        assertThrows(ResourceNotFoundException.class, () -> repository.update(id, 2, "changed", later));
 
         // The review was updated before the movie lookup failed; the abort restored it
         Document stored = reviews.find(Filters.eq("_id", new ObjectId(id))).first();
@@ -173,7 +173,7 @@ class ReviewTransactionRepositoryIT {
         String id = repository.add(review(newUserId(), 8));
         movies.deleteOne(Filters.eq("_id", movieId));
 
-        assertThrows(NotFoundException.class, () -> repository.delete(id));
+        assertThrows(ResourceNotFoundException.class, () -> repository.delete(id));
 
         // The review was deleted before the movie lookup failed; the abort brought it back
         assertNotNull(reviews.find(Filters.eq("_id", new ObjectId(id))).first());
@@ -183,7 +183,7 @@ class ReviewTransactionRepositoryIT {
     void deleteOfMissingReviewIsNotFound() {
         String missingId = new ObjectId().toHexString();
 
-        assertThrows(NotFoundException.class, () -> repository.delete(missingId));
+        assertThrows(ResourceNotFoundException.class, () -> repository.delete(missingId));
     }
 
     @Test
