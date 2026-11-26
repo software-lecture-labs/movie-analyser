@@ -4,6 +4,7 @@ import jakarta.nosql.Column;
 import jakarta.nosql.Convert;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
+import java.util.Locale;
 import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
 
 /**
@@ -13,6 +14,8 @@ import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
 @Entity("movies")
 public class Movie {
 
+    private static final String COMBINING_DOT_ABOVE = "\u0307";
+
     // Kodda String olarak görünür, MongoDB'de ObjectId olarak saklanır; böylece id ile arama eşleşir
     @Id
     @Convert(ObjectIdConverter.class)
@@ -20,6 +23,11 @@ public class Movie {
 
     @Column
     private String title;
+
+    // Büyük/küçük harf duyarsız başlık araması için; MongoDB sürücüsü "içerir" sorgusunda
+    // büyük/küçük harfe duyarlı olduğundan arama bu alanda yapılır. Yalnızca create hesaplar.
+    @Column
+    private String titleLower;
 
     @Column
     private String director;
@@ -48,11 +56,25 @@ public class Movie {
                                String description, String posterUrl) {
         Movie movie = new Movie();
         movie.title = title;
+        movie.titleLower = normalizeTitle(title);
         movie.director = director;
         movie.releaseYear = releaseYear;
         movie.description = description;
         movie.posterUrl = posterUrl;
         return movie;
+    }
+
+    /**
+     * Başlığı arama için normalleştirir: baştaki/sondaki boşlukları atar ve küçük harfe çevirir.
+     * Kayıtlı başlık ile arama metni aynı yöntemle normalleştirilmelidir, aksi halde eşleşmez.
+     * Türkçe büyük "İ" küçük harfe "i" ve birleşik nokta olarak çevrilir; nokta atılır ki
+     * "İSTANBUL" araması "istanbul" yazan aramalarla eşleşsin.
+     */
+    public static String normalizeTitle(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.trim().toLowerCase(Locale.ROOT).replace(COMBINING_DOT_ABOVE, "");
     }
 
     public String getId() {
@@ -61,6 +83,10 @@ public class Movie {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTitleLower() {
+        return titleLower;
     }
 
     public String getDirector() {
