@@ -141,6 +141,12 @@ Geliştirme aşamasında.
 
 Geliştirme aşamasında.
 
+## Kod Yazım Kuralları
+
+- **Kod yorumları Türkçe yazılır.** Bu kural Java dosyalarındaki yorum ve Javadoc'ları, test yorumlarını ve yapılandırma dosyalarındaki (`pom.xml`, `docker-compose.yml`, GitHub Actions, `.env.example` vb.) yorum satırlarını kapsar. Aynı dosyada iki dil karıştırılmaz.
+- Sınıf, metot ve değişken adları ile exception mesajları İngilizce kalır; bu kural yalnızca yorumlar içindir.
+- README, commit mesajları ve PR açıklamaları da Türkçe yazılır.
+
 ## Lisans ve Ders Bilgisi
 
 Bu proje, Java Kurumsal Proje Geliştirme dersi kapsamında dönem projesi olarak geliştirilmektedir. Eğitim amaçlıdır.
