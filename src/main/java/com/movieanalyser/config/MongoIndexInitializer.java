@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Creates the MongoDB indexes once the application has started.
+ * Uygulama başladığında MongoDB indekslerini oluşturur.
  */
 @ApplicationScoped
 public class MongoIndexInitializer {
@@ -25,7 +25,7 @@ public class MongoIndexInitializer {
         this.database = database;
     }
 
-    /** Required by CDI to create a proxy for this normal scoped bean. */
+    /** Normal scope'lu bu bean için proxy oluşturabilmesi adına CDI tarafından gereklidir. */
     protected MongoIndexInitializer() {
         this(null);
     }
@@ -33,7 +33,7 @@ public class MongoIndexInitializer {
     public void onStartup(@Observes @Initialized(ApplicationScoped.class) Object event) {
         int count = 0;
         for (Map.Entry<String, List<IndexModel>> entry : MongoIndexes.definitions().entrySet()) {
-            // createIndexes is idempotent: an index with the same name and keys is left as is.
+            // createIndexes tekrar çalıştırılabilir: aynı ad ve anahtarlara sahip indeks olduğu gibi bırakılır.
             database.getCollection(entry.getKey()).createIndexes(entry.getValue());
             count += entry.getValue().size();
         }
