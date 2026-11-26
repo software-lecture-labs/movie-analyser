@@ -111,7 +111,7 @@ docker compose up -d
 docker compose ps    # STATUS sütununda "healthy" görünmeli
 ```
 
-İlk çalıştırmada uygulama kullanıcısı (`DB_USER`) yalnızca `DB_NAME` veritabanına ve entegrasyon testlerinin kullandığı test veritabanına (`DB_NAME` + `_test`) erişim yetkisiyle otomatik oluşturulur.
+İlk çalıştırmada iki kullanıcı otomatik oluşturulur: uygulama kullanıcısı (`DB_USER`) yalnızca `DB_NAME` veritabanında, test kullanıcısı (`DB_TEST_USER`) yalnızca entegrasyon testlerinin kullandığı test veritabanında (`DB_NAME` + `_test`) yetkilidir. Sunucu ortamında `DB_TEST_USER` boş bırakılırsa test kullanıcısı oluşturulmaz.
 
 > Bilgisayarınızda kurulu bir MongoDB servisi 27017 portunu kullanıyorsa `.env` içindeki `DB_PORT` değerini değiştirin (örneğin `27018`).
 
@@ -155,13 +155,14 @@ Entegrasyon testleri gerçek MongoDB replica set'ine karşı çalışır (transa
 mvn -B verify -DskipITs=false
 ```
 
-Testler uygulamanın veritabanını değil, ayrı bir test veritabanını (`DB_NAME` + `_test`, örneğin `movieanalyser_test`) kullanır. Her test kendi verisini oluşturup sonunda siler, yarıda kalan bir test de uygulama verisinde iz bırakmaz.
+Testler uygulamanın veritabanını değil, ayrı bir test veritabanını (`DB_NAME` + `_test`, örneğin `movieanalyser_test`) kullanır ve yalnızca bu veritabanında yetkili ayrı bir test kullanıcısıyla (`DB_TEST_USER`) bağlanır; uygulama kullanıcısının test veritabanında, test kullanıcısının da uygulama veritabanında yetkisi yoktur. Her test kendi verisini oluşturup sonunda siler, yarıda kalan bir test de uygulama verisinde iz bırakmaz.
 
-**Test veritabanı eklenmeden önce kurulmuş ortamlar için (tek seferlik):** Uygulama kullanıcısının test veritabanı yetkisi, MongoDB volume'u ilk oluşturulurken verilir. Daha önce `docker compose up` çalıştırdıysanız aşağıdaki iki komutu bir kez çalıştırın (Windows PowerShell ve macOS / Linux'ta aynı):
+**Test kullanıcısı eklenmeden önce kurulmuş ortamlar için (tek seferlik):** Kullanıcılar MongoDB volume'u ilk oluşturulurken tanımlanır. Daha önce `docker compose up` çalıştırdıysanız önce `.env` dosyanıza `DB_TEST_USER` ve `DB_TEST_PASSWORD` satırlarını ekleyin (bkz. `.env.example`), sonra aşağıdaki komutları bir kez çalıştırın (Windows PowerShell ve macOS / Linux'ta aynı). Betik test kullanıcısını oluşturur ve uygulama kullanıcısına daha önce verilmiş test veritabanı yetkisini geri alır; tekrar çalıştırmak zararsızdır.
 
 ```bash
-docker compose cp docker/mongo/grant-test-db.js mongodb:/tmp/grant-test-db.js
-docker compose exec mongodb sh -c 'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --file /tmp/grant-test-db.js'
+docker compose up -d
+docker compose cp docker/mongo/create-test-user.js mongodb:/tmp/create-test-user.js
+docker compose exec mongodb sh -c 'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --file /tmp/create-test-user.js'
 ```
 
 Yerel veriyi korumanız gerekmiyorsa `docker compose down -v` ve ardından `docker compose up -d` ile veritabanını sıfırdan kurmak da aynı sonucu verir.
