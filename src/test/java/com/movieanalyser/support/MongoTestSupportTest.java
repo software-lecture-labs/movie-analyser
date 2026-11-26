@@ -16,6 +16,12 @@ class MongoTestSupportTest {
     }
 
     @Test
+    void testsUseSeparateUserFromApplication() {
+        // Uygulama kullanıcısının test veritabanında yetkisi olmamalı; testler kendi kullanıcısıyla bağlanır
+        assertNotEquals(MongoTestSupport.applicationUserName(), MongoTestSupport.testUserName());
+    }
+
+    @Test
     void testsConnectToTestDatabase() {
         // İstemci oluşturmak bağlantı açmaz; yalnızca hangi veritabanının seçildiğine bakılıyor
         try (MongoClient client = MongoTestSupport.client()) {

@@ -12,8 +12,8 @@ import com.mongodb.client.MongoDatabase;
  *
  * <p>Testler uygulamanın veritabanını değil, yanına açılan ayrı bir test veritabanını
  * ({@code DB_NAME + "_test"}) kullanır; böylece yarıda kalan bir test geliştiricinin
- * kendi verisinde iz bırakmaz. Kullanıcı uygulama veritabanında tanımlı olduğu için
- * kimlik doğrulama orada yapılır.</p>
+ * kendi verisinde iz bırakmaz. Bağlantı, yalnızca test veritabanında yetkili ayrı bir
+ * test kullanıcısıyla ({@code DB_TEST_USER}) yapılır; uygulama kullanıcısı kullanılmaz.</p>
  */
 public final class MongoTestSupport {
 
@@ -22,9 +22,10 @@ public final class MongoTestSupport {
 
     /** Opens a new client; the caller closes it. */
     public static MongoClient client() {
-        String url = "mongodb://" + env("DB_USER", "movieanalyser") + ":" + env("DB_PASSWORD", "change-me")
+        // Test kullanıcısı test veritabanında tanımlı, kimlik doğrulama da orada yapılır
+        String url = "mongodb://" + testUserName() + ":" + env("DB_TEST_PASSWORD", "change-me-test")
                 + "@" + env("DB_HOST", "localhost") + ":" + env("DB_PORT", "27017")
-                + "/" + applicationDatabaseName() + "?authSource=" + applicationDatabaseName()
+                + "/" + testDatabaseName() + "?authSource=" + testDatabaseName()
                 + "&directConnection=true";
         return MongoClients.create(url);
     }
@@ -34,7 +35,7 @@ public final class MongoTestSupport {
         return client.getDatabase(testDatabaseName());
     }
 
-    /** Uygulamanın veritabanı; testler buna yazmaz, yalnızca giriş için kullanılır. */
+    /** Uygulamanın veritabanı; testler buna bağlanmaz. */
     public static String applicationDatabaseName() {
         return env("DB_NAME", "movieanalyser");
     }
@@ -42,6 +43,16 @@ public final class MongoTestSupport {
     /** Entegrasyon testlerinin veritabanı. */
     public static String testDatabaseName() {
         return applicationDatabaseName() + "_test";
+    }
+
+    /** Uygulamanın kullanıcısı; testler bu kullanıcıyla bağlanmaz. */
+    public static String applicationUserName() {
+        return env("DB_USER", "movieanalyser");
+    }
+
+    /** Yalnızca test veritabanında yetkili test kullanıcısı. */
+    public static String testUserName() {
+        return env("DB_TEST_USER", "movieanalyser_test");
     }
 
     private static String env(String name, String fallback) {
