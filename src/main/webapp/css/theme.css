@@ -1,0 +1,124 @@
+/* Tema değişkenleri (açık/koyu), fareyi takip eden ışık ve tema düğmesi.
+   Sayfaya özel stiller bu değişkenleri kullanır. */
+
+:root {
+  color-scheme: light;
+  --bg: #efeae3;
+  --text: #171512;
+  --muted: #6b645c;
+  --card: rgba(255, 255, 255, 0.62);
+  --card-border: rgba(23, 21, 18, 0.08);
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --border: rgba(23, 21, 18, 0.16);
+  --accent: #d63a2f;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(214, 58, 47, 0.12);
+  --error: #b42318;
+  --success: #157f3c;
+  --shadow: 0 10px 30px rgba(23, 21, 18, 0.08);
+  /* Işığın rengi: ton (hue) JS'ten gelir, doygunluk/açıklık temaya göre */
+  --glow-sat: 85%;
+  --glow-light: 62%;
+  --glow-alpha: 0.42;
+  --glow-size: 680px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e0d16;
+  --text: #f3f1ff;
+  --muted: #a5a2bd;
+  --card: rgba(26, 24, 40, 0.6);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --input-bg: rgba(14, 13, 22, 0.7);
+  --border: rgba(255, 255, 255, 0.16);
+  --accent: #9b8cff;
+  --accent-contrast: #0e0d16;
+  --accent-soft: rgba(155, 140, 255, 0.16);
+  --error: #ff8a80;
+  --success: #5ee38f;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --glow-sat: 90%;
+  --glow-light: 60%;
+  --glow-alpha: 0.36;
+}
+
+/* display verilen öğelerde de hidden özniteliği her zaman gizler */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Fareyi takip eden ışık: sabit, tıklamaları engellemeyen, içeriğin arkasında bir katman */
+.glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(var(--glow-size) circle at var(--glow-x, 70%) var(--glow-y, 35%),
+      hsla(var(--glow-hue, 14), var(--glow-sat), var(--glow-light), var(--glow-alpha)),
+      transparent 70%),
+    radial-gradient(900px circle at 10% 100%,
+      hsla(var(--glow-hue, 14), var(--glow-sat), var(--glow-light), calc(var(--glow-alpha) * 0.35)),
+      transparent 70%);
+}
+
+/* Tema düğmesi */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(-12deg) scale(1.05);
+  border-color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Açık temada ay (koyuya geç), koyu temada güneş (açığa geç) görünür */
+.theme-toggle .icon-sun,
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .theme-toggle {
+    transition: none;
+  }
+
+  .theme-toggle:hover {
+    transform: none;
+  }
+}

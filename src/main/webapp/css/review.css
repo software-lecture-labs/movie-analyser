@@ -1,15 +1,6 @@
-/* Puan/yorum sayfası */
+/* Puan/yorum sayfası. Renkler theme.css'teki değişkenlerden gelir (açık/koyu tema). */
 :root {
-  --bg: #f5f5f7;
-  --card: #ffffff;
-  --text: #1d1d1f;
-  --muted: #6e6e73;
-  --accent: #c2410c;
-  --accent-soft: #ffedd5;
-  --error: #b91c1c;
-  --success: #15803d;
-  --border: #d2d2d7;
-  --radius: 12px;
+  --radius: 18px;
 }
 
 * {
@@ -18,39 +9,70 @@
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
+  min-height: 100vh;
 }
 
 .page {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: 28px 16px 56px;
 }
 
-.page-header h1 {
-  margin: 0 0 4px;
-  font-size: 1.8rem;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+/* İri ve kalın başlık; vurgu kelimesi tema rengiyle */
+.hero-title {
+  margin: 0 0 14px;
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.hero-title .accent {
+  color: var(--accent);
 }
 
 .subtitle {
-  margin: 0 0 20px;
+  margin: 0 0 32px;
   color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 34em;
 }
 
 .card {
   background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  /* Işık kartların arkasından bulanık görünür */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .card h2 {
   margin: 0 0 12px;
-  font-size: 1.15rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 label,
@@ -64,11 +86,12 @@ input[type="text"],
 select,
 textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   font: inherit;
-  background: #fff;
+  color: var(--text);
+  background: var(--input-bg);
 }
 
 input:focus,
@@ -110,8 +133,8 @@ button:focus-visible,
 }
 
 .movie-title {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   margin: 0;
 }
 
@@ -122,16 +145,16 @@ button:focus-visible,
 
 .score {
   text-align: center;
-  min-width: 120px;
-  padding: 10px 14px;
+  min-width: 130px;
+  padding: 12px 16px;
   border-radius: var(--radius);
   background: var(--accent-soft);
 }
 
 .score-value {
   display: block;
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 2.2rem;
+  font-weight: 900;
   color: var(--accent);
 }
 
@@ -146,8 +169,8 @@ button:focus-visible,
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.5); }
-  50% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(194, 65, 12, 0); }
+  0% { transform: scale(1); }
+  45% { transform: scale(1.07); }
   100% { transform: scale(1); }
 }
 
@@ -173,45 +196,60 @@ button:focus-visible,
 
 .rating-options label {
   margin: 0;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
+  background: var(--input-bg);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+
+.rating-options label:hover {
+  transform: translateY(-2px);
 }
 
 .rating-options input:checked + label {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
 }
 
 .actions {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 18px;
   flex-wrap: wrap;
 }
 
+/* Hap biçimli düğmeler */
 button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
   cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 button.secondary {
-  background: #fff;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
 }
 
 button:disabled {
@@ -240,7 +278,7 @@ button:disabled {
 
 .review-list li {
   padding: 12px 0;
-  border-bottom: 1px solid var(--bg);
+  border-bottom: 1px solid var(--card-border);
 }
 
 .review-list li:last-child {
@@ -255,7 +293,7 @@ button:disabled {
 }
 
 .review-rating {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
 }
 
@@ -274,5 +312,16 @@ button:disabled {
   .movie-summary {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score.updated {
+    animation: none;
+  }
+
+  .rating-options label,
+  button {
+    transition: none;
   }
 }
