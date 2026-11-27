@@ -9,9 +9,10 @@ import jakarta.validation.constraints.Size;
  * yılın üst sınırı gibi zamana bağlı kurallar serviste kontrol edilir.
  */
 public record CreateMovieRequest(
-        @NotBlank @Size(max = 200) String title,
-        @NotBlank @Size(max = 100) String director,
-        @Min(1888) int releaseYear,
-        @Size(max = 2000) String description,
-        @Size(max = 500) String posterUrl) {
+        @NotBlank(message = "boş olamaz") @Size(max = 200, message = "en fazla {max} karakter olabilir") String title,
+        @NotBlank(message = "boş olamaz") @Size(max = 100, message = "en fazla {max} karakter olabilir")
+        String director,
+        @Min(value = 1888, message = "en az {value} olmalı") int releaseYear,
+        @Size(max = 2000, message = "en fazla {max} karakter olabilir") String description,
+        @Size(max = 500, message = "en fazla {max} karakter olabilir") String posterUrl) {
 }

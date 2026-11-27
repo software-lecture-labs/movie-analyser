@@ -14,6 +14,7 @@ import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
+import com.movieanalyser.service.MovieService;
 import jakarta.data.page.Page;
 import jakarta.data.page.PageRequest;
 import java.time.Clock;
@@ -43,13 +44,16 @@ class ReviewServiceQueriesTest {
     private ReviewRepository reviews;
 
     @Mock
+    private MovieService movies;
+
+    @Mock
     private Page<Review> page;
 
     private ReviewServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new ReviewServiceImpl(transactions, reviews, Clock.fixed(NOW, ZoneOffset.UTC));
+        service = new ReviewServiceImpl(transactions, reviews, movies, Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
     @Test
@@ -84,6 +88,24 @@ class ReviewServiceQueriesTest {
         verify(reviews).findByMovieIdOrderByCreatedAtDescIdDesc(eq(MOVIE_ID), request.capture());
         assertEquals(2, request.getValue().page());
         assertEquals(5, request.getValue().size());
+    }
+
+    @Test
+    void listByMovieOfMissingMovieIs404WithoutListing() {
+        // Olmayan bir filmin yorumları istenirse boş liste değil 404 dönmeli
+        when(movies.getMovie(MOVIE_ID)).thenThrow(new ResourceNotFoundException("Film bulunamadı: " + MOVIE_ID));
+
+        assertThrows(ResourceNotFoundException.class, () -> service.listByMovie(MOVIE_ID, 1, 20));
+        verifyNoInteractions(reviews);
+    }
+
+    @Test
+    void listByMovieChecksMovieBeforeListing() {
+        when(reviews.findByMovieIdOrderByCreatedAtDescIdDesc(eq(MOVIE_ID), any(PageRequest.class))).thenReturn(page);
+
+        service.listByMovie(MOVIE_ID, 1, 20);
+
+        verify(movies).getMovie(MOVIE_ID);
     }
 
     @Test

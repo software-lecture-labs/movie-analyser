@@ -13,7 +13,6 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -36,9 +35,6 @@ import java.net.URI;
 @Consumes(MediaType.APPLICATION_JSON)
 public class MovieResource {
 
-    private static final String DEFAULT_PAGE = "1";
-    private static final String DEFAULT_SIZE = "20";
-
     private MovieService movies;
 
     @Inject
@@ -51,12 +47,13 @@ public class MovieResource {
         // doğrudan kullanılmaz
     }
 
-    /** {@code ?sort=title|rating|year}; verilmezse başlığa göre. */
+    /** {@code ?page=} varsayılan 1, {@code ?size=} varsayılan 20, {@code ?sort=title|rating|year} varsayılan title. */
     @GET
-    public PageResponse<MovieResponse> list(@QueryParam("page") @DefaultValue(DEFAULT_PAGE) int page,
-                                            @QueryParam("size") @DefaultValue(DEFAULT_SIZE) int size,
+    public PageResponse<MovieResponse> list(@QueryParam("page") String page, @QueryParam("size") String size,
                                             @QueryParam("sort") String sort) {
-        return PageMapper.toResponse(movies.listMovies(page, size, MovieSort.from(sort)), MovieMapper::toResponse);
+        return PageMapper.toResponse(
+                movies.listMovies(QueryParams.page(page), QueryParams.size(size), MovieSort.from(sort)),
+                MovieMapper::toResponse);
     }
 
     /** Başarılı olursa 201 ve yeni filmin adresi ({@code Location}) döner. */
@@ -64,7 +61,8 @@ public class MovieResource {
     public Response create(@Valid @NotNull CreateMovieRequest request, @Context UriInfo uriInfo) {
         Movie movie = movies.addMovie(request.title(), request.director(), request.releaseYear(),
                 request.description(), request.posterUrl());
-        URI location = URI.create(uriInfo.getAbsolutePath() + "/" + movie.getId());
+        // UriBuilder yol sonundaki "/" ile çift "/" oluşmasını engeller
+        URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(movie.getId())).build();
         return Response.created(location).entity(MovieMapper.toResponse(movie)).build();
     }
 
@@ -77,8 +75,9 @@ public class MovieResource {
     @GET
     @Path("/search")
     public PageResponse<MovieResponse> search(@QueryParam("q") String query,
-                                              @QueryParam("page") @DefaultValue(DEFAULT_PAGE) int page,
-                                              @QueryParam("size") @DefaultValue(DEFAULT_SIZE) int size) {
-        return PageMapper.toResponse(movies.searchMovies(query, page, size), MovieMapper::toResponse);
+                                              @QueryParam("page") String page,
+                                              @QueryParam("size") String size) {
+        return PageMapper.toResponse(movies.searchMovies(query, QueryParams.page(page), QueryParams.size(size)),
+                MovieMapper::toResponse);
     }
 }

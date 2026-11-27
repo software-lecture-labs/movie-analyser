@@ -10,8 +10,9 @@ import jakarta.validation.constraints.Size;
  * aynı kurallar entity'de de korunur.
  */
 public record CreateReviewRequest(
-        @NotBlank String userId,
-        @NotBlank String movieId,
-        @Min(1) @Max(10) int rating,
-        @Size(max = 1000) String comment) {
+        @NotBlank(message = "boş olamaz") String userId,
+        @NotBlank(message = "boş olamaz") String movieId,
+        @Min(value = 1, message = "1 ile 10 arasında olmalı") @Max(value = 10, message = "1 ile 10 arasında olmalı")
+        int rating,
+        @Size(max = 1000, message = "en fazla {max} karakter olabilir") String comment) {
 }

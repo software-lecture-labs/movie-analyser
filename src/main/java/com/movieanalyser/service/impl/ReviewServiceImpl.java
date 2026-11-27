@@ -6,8 +6,10 @@ import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
+import com.movieanalyser.service.MovieService;
 import com.movieanalyser.service.ReviewService;
 import jakarta.data.page.Page;
+import jakarta.data.page.PageRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Clock;
@@ -22,12 +24,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     private ReviewTransactionRepository transactions;
     private ReviewRepository reviews;
+    private MovieService movies;
     private Clock clock;
 
     @Inject
-    public ReviewServiceImpl(ReviewTransactionRepository transactions, ReviewRepository reviews, Clock clock) {
+    public ReviewServiceImpl(ReviewTransactionRepository transactions, ReviewRepository reviews,
+                             MovieService movies, Clock clock) {
         this.transactions = transactions;
         this.reviews = reviews;
+        this.movies = movies;
         this.clock = clock;
     }
 
@@ -77,8 +82,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Page<Review> listByMovie(String movieId, int page, int size) {
         requireValidId(movieId, "Film");
-        // Sayfa bilgisi veritabanına gitmeden önce doğrulanır
-        return reviews.findByMovieIdOrderByCreatedAtDescIdDesc(movieId, Paging.of(page, size));
+        PageRequest request = Paging.of(page, size);
+        // Olmayan bir filmin yorumları istenirse boş liste değil 404 dönsün
+        movies.getMovie(movieId);
+        return reviews.findByMovieIdOrderByCreatedAtDescIdDesc(movieId, request);
     }
 
     @Override
