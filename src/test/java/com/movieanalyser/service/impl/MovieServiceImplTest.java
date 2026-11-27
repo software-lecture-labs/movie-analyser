@@ -3,6 +3,7 @@ package com.movieanalyser.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -12,6 +13,7 @@ import com.movieanalyser.entity.Movie;
 import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.MovieRepository;
+import com.movieanalyser.service.MovieSort;
 import jakarta.data.Order;
 import jakarta.data.page.Page;
 import jakarta.data.page.PageRequest;
@@ -115,7 +117,7 @@ class MovieServiceImplTest {
     void listUsesRequestedPageSortedByTitle() {
         when(movies.findAll(any(PageRequest.class), any(Order.class))).thenReturn(page);
 
-        assertSame(page, service.listMovies(2, 10));
+        assertSame(page, service.listMovies(2, 10, MovieSort.TITLE));
 
         ArgumentCaptor<PageRequest> request = ArgumentCaptor.forClass(PageRequest.class);
         ArgumentCaptor<Order<Movie>> order = ArgumentCaptor.forClass(Order.class);
@@ -126,8 +128,38 @@ class MovieServiceImplTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void listByRatingPutsHighestRatedFirst() {
+        when(movies.findAll(any(PageRequest.class), any(Order.class))).thenReturn(page);
+
+        service.listMovies(1, 20, MovieSort.RATING);
+
+        ArgumentCaptor<Order<Movie>> order = ArgumentCaptor.forClass(Order.class);
+        verify(movies).findAll(any(PageRequest.class), order.capture());
+        // Eşit puanda çok yorum almış film önce, en son id ile sabit sıra
+        assertEquals("averageRating", order.getValue().sorts().get(0).property());
+        assertTrue(order.getValue().sorts().get(0).isDescending());
+        assertEquals("ratingCount", order.getValue().sorts().get(1).property());
+        assertEquals("id", order.getValue().sorts().get(2).property());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listByYearPutsNewestFirst() {
+        when(movies.findAll(any(PageRequest.class), any(Order.class))).thenReturn(page);
+
+        service.listMovies(1, 20, MovieSort.YEAR);
+
+        ArgumentCaptor<Order<Movie>> order = ArgumentCaptor.forClass(Order.class);
+        verify(movies).findAll(any(PageRequest.class), order.capture());
+        assertEquals("releaseYear", order.getValue().sorts().get(0).property());
+        assertTrue(order.getValue().sorts().get(0).isDescending());
+        assertEquals("titleLower", order.getValue().sorts().get(1).property());
+    }
+
+    @Test
     void listRejectsInvalidPageWithoutTouchingRepository() {
-        assertThrows(BusinessRuleException.class, () -> service.listMovies(0, 10));
+        assertThrows(BusinessRuleException.class, () -> service.listMovies(0, 10, MovieSort.TITLE));
         verifyNoInteractions(movies);
     }
 

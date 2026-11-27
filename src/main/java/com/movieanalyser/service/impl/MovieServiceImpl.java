@@ -6,6 +6,7 @@ import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.MovieRepository;
 import com.movieanalyser.service.MovieService;
+import com.movieanalyser.service.MovieSort;
 import jakarta.data.Order;
 import jakarta.data.Sort;
 import jakarta.data.page.Page;
@@ -26,8 +27,13 @@ public class MovieServiceImpl implements MovieService {
     /** Duyurulmuş ama henüz çıkmamış filmler için birkaç yıl ileri izin verilir. */
     static final int MAX_YEARS_AHEAD = 5;
 
-    // Liste sırası: başlık, aynı başlıklarda id; sayfalar arasında kayma olmasın diye
+    // Her sıralama en sonda id ile biter; sayfalar arasında kayma olmasın diye.
+    // Bu sıralamalara uygun index'ler MongoIndexes'te tanımlı.
     private static final Order<Movie> BY_TITLE = Order.by(Sort.asc("titleLower"), Sort.asc("id"));
+    private static final Order<Movie> BY_RATING =
+            Order.by(Sort.desc("averageRating"), Sort.desc("ratingCount"), Sort.asc("id"));
+    private static final Order<Movie> BY_YEAR =
+            Order.by(Sort.desc("releaseYear"), Sort.asc("titleLower"), Sort.asc("id"));
 
     private MovieRepository movies;
     private Clock clock;
@@ -64,8 +70,13 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Page<Movie> listMovies(int page, int size) {
-        return movies.findAll(Paging.of(page, size), BY_TITLE);
+    public Page<Movie> listMovies(int page, int size, MovieSort sort) {
+        Order<Movie> order = switch (sort) {
+            case RATING -> BY_RATING;
+            case YEAR -> BY_YEAR;
+            case TITLE -> BY_TITLE;
+        };
+        return movies.findAll(Paging.of(page, size), order);
     }
 
     @Override
