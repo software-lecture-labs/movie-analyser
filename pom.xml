@@ -69,6 +69,14 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Jersey (Payara'nın JAX-RS uygulaması): birim testlerde Response oluşturabilmek için -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>3.1.11</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
