@@ -170,7 +170,8 @@ Yerel veriyi korumanız gerekmiyorsa `docker compose down -v` ve ardından `dock
 ## Kod Yazım Kuralları
 
 - **Kod yorumları Türkçe yazılır.** Bu kural Java dosyalarındaki yorum ve Javadoc'ları, test yorumlarını ve yapılandırma dosyalarındaki (`pom.xml`, `docker-compose.yml`, GitHub Actions, `.env.example` vb.) yorum satırlarını kapsar. Aynı dosyada iki dil karıştırılmaz.
-- Sınıf, metot ve değişken adları ile exception mesajları İngilizce kalır; bu kural yalnızca yorumlar içindir.
+- Sınıf, metot ve değişken adları İngilizce kalır; bu kural yalnızca yorumlar içindir.
+- API'nin istemciye döndürdüğü hata ve doğrulama mesajları Türkçedir ve sunucunun diline bağlı değildir (Bean Validation kısıtlarında `message` açıkça yazılır).
 - README, commit mesajları ve PR açıklamaları da Türkçe yazılır.
 
 ## Lisans ve Ders Bilgisi
