@@ -26,7 +26,7 @@
         <payara.micro.version>6.2025.11</payara.micro.version>
         <mockito.version>5.17.0</mockito.version>
         <failsafe.plugin.version>3.5.6</failsafe.plugin.version>
-        <!-- Integration tests (*IT) need a running MongoDB; run them with -DskipITs=false -->
+        <!-- Entegrasyon testleri (*IT) çalışan bir MongoDB gerektirir; -DskipITs=false ile çalıştırın -->
         <skipITs>true</skipITs>
     </properties>
 
@@ -46,7 +46,7 @@
             <version>${jnosql.version}</version>
         </dependency>
 
-        <!-- MicroProfile Config API (Payara Micro provides it at runtime) -->
+        <!-- MicroProfile Config API (Payara Micro bunu çalışma zamanında sağlar) -->
         <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>
@@ -62,7 +62,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito: test doubles in unit tests -->
+        <!-- Mockito: unit testlerde test çiftleri -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -82,7 +82,7 @@
     <build>
         <finalName>movie-analyser</finalName>
         <plugins>
-            <!-- Lint: run with "mvn checkstyle:check pmd:check"; any violation fails the build -->
+            <!-- Lint: "mvn checkstyle:check pmd:check" ile çalıştırın; herhangi bir ihlal build'i başarısız yapar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -130,7 +130,7 @@
                 <version>${surefire.plugin.version}</version>
             </plugin>
 
-            <!-- Runs *IT classes in the integration-test phase -->
+            <!-- *IT sınıflarını integration-test aşamasında çalıştırır -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
