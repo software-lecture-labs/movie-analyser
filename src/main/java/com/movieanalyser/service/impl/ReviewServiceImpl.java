@@ -7,6 +7,7 @@ import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
 import com.movieanalyser.service.ReviewService;
+import jakarta.data.page.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Clock;
@@ -64,6 +65,26 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(String reviewId) {
         requireValidId(reviewId, "Review");
         transactions.delete(reviewId);
+    }
+
+    @Override
+    public Review getReview(String reviewId) {
+        requireValidId(reviewId, "Review");
+        return reviews.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
+    }
+
+    @Override
+    public Page<Review> listByMovie(String movieId, int page, int size) {
+        requireValidId(movieId, "Movie");
+        // Sayfa bilgisi veritabanına gitmeden önce doğrulanır
+        return reviews.findByMovieIdOrderByCreatedAtDescIdDesc(movieId, Paging.of(page, size));
+    }
+
+    @Override
+    public Page<Review> listByUser(String userId, int page, int size) {
+        requireValidId(userId, "User");
+        return reviews.findByUserIdOrderByCreatedAtDescIdDesc(userId, Paging.of(page, size));
     }
 
     /** A malformed id cannot belong to any stored entity, so it is reported as not found. */
