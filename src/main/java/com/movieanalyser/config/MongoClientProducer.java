@@ -10,14 +10,14 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
- * Exposes the MongoDB driver objects as CDI beans.
+ * MongoDB sürücü nesnelerini CDI bean'i olarak sunar.
  *
- * <p>Jakarta NoSQL keeps its own client internally and does not expose it,
- * so operations it does not cover (index creation, and later session-based
- * multi-document transactions) use this client from the plain driver.
- * Writes made through Jakarta NoSQL repositories do not join a driver
- * session, so transactional writes must go through this client.
- * It reads the same connection settings as Jakarta NoSQL.</p>
+ * <p>Jakarta NoSQL kendi istemcisini içeride tutar ve dışarı açmaz.
+ * Bu yüzden onun kapsamadığı işlemler (indeks oluşturma ve ileride oturum tabanlı
+ * çok belgeli transaction'lar) düz sürücüdeki bu istemciyle yapılır.
+ * Jakarta NoSQL repository'leriyle yapılan yazmalar sürücü oturumuna katılmaz;
+ * bu nedenle transaction gerektiren yazmalar bu istemci üzerinden yapılmalıdır.
+ * Jakarta NoSQL ile aynı bağlantı ayarlarını okur.</p>
  */
 @ApplicationScoped
 public class MongoClientProducer {
@@ -33,7 +33,7 @@ public class MongoClientProducer {
         this.database = database;
     }
 
-    /** Required by CDI to create a proxy for this normal scoped bean. */
+    /** Normal scope'lu bu bean için proxy oluşturabilmesi adına CDI tarafından gereklidir. */
     protected MongoClientProducer() {
         this(null, null);
     }
@@ -41,7 +41,7 @@ public class MongoClientProducer {
     @Produces
     @ApplicationScoped
     public MongoClient mongoClient() {
-        // One client per application: it holds the connection pool.
+        // Uygulama başına tek istemci: bağlantı havuzunu o tutar.
         return MongoClients.create(url);
     }
 

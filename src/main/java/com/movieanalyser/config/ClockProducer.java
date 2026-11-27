@@ -5,8 +5,8 @@ import jakarta.enterprise.inject.Produces;
 import java.time.Clock;
 
 /**
- * Provides the clock used for timestamps. Injecting it (instead of calling
- * Instant.now() directly) lets tests use a fixed time.
+ * Zaman damgaları için kullanılan saati sağlar. Saati enjekte etmek
+ * (Instant.now() çağırmak yerine) testlerin sabit bir zaman kullanmasını sağlar.
  */
 @ApplicationScoped
 public class ClockProducer {

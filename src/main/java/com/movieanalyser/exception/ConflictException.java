@@ -1,8 +1,8 @@
 package com.movieanalyser.exception;
 
 /**
- * Thrown when an operation conflicts with existing data, for example a second
- * review of the same movie by the same user. Mapped to HTTP 409.
+ * Bir işlem mevcut verilerle çakıştığında fırlatılır; örneğin aynı kullanıcının
+ * aynı filme ikinci kez yorum yapması. HTTP 409'a eşlenir.
  */
 public class ConflictException extends RuntimeException {
 
