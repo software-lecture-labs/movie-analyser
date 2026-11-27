@@ -92,7 +92,8 @@ class ReviewTransactionRepositoryIT {
         repository.add(review(userId, 8));
         Review second = review(userId, 2);
 
-        assertThrows(ConflictException.class, () -> repository.add(second));
+        ConflictException conflict = assertThrows(ConflictException.class, () -> repository.add(second));
+        assertEquals("Bu kullanıcı bu filme zaten yorum yapmış", conflict.getMessage());
 
         assertMovie(8.0, 1);
         assertEquals(1, reviews.countDocuments(Filters.eq("movieId", movieId.toHexString())));

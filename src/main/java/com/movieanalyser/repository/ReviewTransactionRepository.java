@@ -85,7 +85,7 @@ public class ReviewTransactionRepository {
             });
         } catch (MongoWriteException e) {
             if (ErrorCategory.fromErrorCode(e.getCode()) == ErrorCategory.DUPLICATE_KEY) {
-                throw new ConflictException("The user has already reviewed this movie", e);
+                throw new ConflictException("Bu kullanıcı bu filme zaten yorum yapmış", e);
             }
             throw e;
         }
@@ -135,7 +135,7 @@ public class ReviewTransactionRepository {
     private Document findReview(ClientSession session, String reviewId) {
         Document review = reviews.find(session, byId(reviewId)).first();
         if (review == null) {
-            throw new ResourceNotFoundException("Review not found: " + reviewId);
+            throw new ResourceNotFoundException("Yorum bulunamadı: " + reviewId);
         }
         return review;
     }
@@ -143,7 +143,7 @@ public class ReviewTransactionRepository {
     private void changeRating(ClientSession session, String movieId, Function<RatingSummary, RatingSummary> change) {
         Document movie = movies.find(session, byId(movieId)).first();
         if (movie == null) {
-            throw new ResourceNotFoundException("Movie not found: " + movieId);
+            throw new ResourceNotFoundException("Film bulunamadı: " + movieId);
         }
         RatingSummary next = change.apply(new RatingSummary(
                 numberOrZero(movie.get(AVERAGE_RATING)).doubleValue(),

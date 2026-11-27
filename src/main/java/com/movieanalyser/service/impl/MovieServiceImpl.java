@@ -58,9 +58,9 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Movie getMovie(String id) {
         if (!EntityIds.isValid(id)) {
-            throw new ResourceNotFoundException("Movie not found: " + id);
+            throw new ResourceNotFoundException("Film bulunamadı: " + id);
         }
-        return movies.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found: " + id));
+        return movies.findById(id).orElseThrow(() -> new ResourceNotFoundException("Film bulunamadı: " + id));
     }
 
     @Override

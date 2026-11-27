@@ -38,8 +38,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review addReview(String userId, String movieId, int rating, String comment) {
-        requireValidId(userId, "User");
-        requireValidId(movieId, "Movie");
+        requireValidId(userId, "Kullanıcı");
+        requireValidId(movieId, "Film");
         Review review = applyRules(() -> Review.create(userId, movieId, rating, comment, clock.instant()));
 
         String id = transactions.add(review);
@@ -49,9 +49,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review updateReview(String reviewId, int rating, String comment) {
-        requireValidId(reviewId, "Review");
+        requireValidId(reviewId, "Yorum");
         Review review = reviews.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
+                .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: " + reviewId));
         applyRules(() -> {
             review.edit(rating, comment, clock.instant());
             return review;
@@ -63,34 +63,34 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(String reviewId) {
-        requireValidId(reviewId, "Review");
+        requireValidId(reviewId, "Yorum");
         transactions.delete(reviewId);
     }
 
     @Override
     public Review getReview(String reviewId) {
-        requireValidId(reviewId, "Review");
+        requireValidId(reviewId, "Yorum");
         return reviews.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
+                .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: " + reviewId));
     }
 
     @Override
     public Page<Review> listByMovie(String movieId, int page, int size) {
-        requireValidId(movieId, "Movie");
+        requireValidId(movieId, "Film");
         // Sayfa bilgisi veritabanına gitmeden önce doğrulanır
         return reviews.findByMovieIdOrderByCreatedAtDescIdDesc(movieId, Paging.of(page, size));
     }
 
     @Override
     public Page<Review> listByUser(String userId, int page, int size) {
-        requireValidId(userId, "User");
+        requireValidId(userId, "Kullanıcı");
         return reviews.findByUserIdOrderByCreatedAtDescIdDesc(userId, Paging.of(page, size));
     }
 
     /** A malformed id cannot belong to any stored entity, so it is reported as not found. */
     private static void requireValidId(String id, String entityName) {
         if (!EntityIds.isValid(id)) {
-            throw new ResourceNotFoundException(entityName + " not found: " + id);
+            throw new ResourceNotFoundException(entityName + " bulunamadı: " + id);
         }
     }
 
