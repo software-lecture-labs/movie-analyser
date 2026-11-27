@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.movieanalyser.entity.Review;
+import com.movieanalyser.entity.User;
 import com.movieanalyser.repository.MovieRepository;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
@@ -78,5 +79,22 @@ class ErrorMessagesTest {
         assertEquals("Puan 1 ile 10 arasında olmalı, gelen: 0",
                 assertThrows(BusinessRuleException.class,
                         () -> reviewService.addReview(USER_ID, MOVIE_ID, 0, null)).getMessage());
+    }
+
+    @Test
+    void userRuleMessagesAreTurkish() {
+        // Kayıt sayfasında kullanıcıya gösterilecek mesajlar
+        String hash = "pbkdf2_sha256$1$c2FsdA==$aGFzaA==";
+        assertEquals("username boş olamaz", userError(" ", "a@b.co", hash));
+        assertEquals("email boş olamaz", userError("seyma", null, hash));
+        assertEquals("username 3 ile 30 karakter arasında olmalı", userError("ab", "a@b.co", hash));
+        assertEquals("username yalnızca harf, rakam, nokta, alt çizgi ve tire içerebilir",
+                userError("se yma", "a@b.co", hash));
+        assertEquals("email geçerli bir e-posta adresi değil", userError("seyma", "abc", hash));
+    }
+
+    private static String userError(String username, String email, String hash) {
+        return assertThrows(IllegalArgumentException.class,
+                () -> User.create(username, email, hash, NOW)).getMessage();
     }
 }

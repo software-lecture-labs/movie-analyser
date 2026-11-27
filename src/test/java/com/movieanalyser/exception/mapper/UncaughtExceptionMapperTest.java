@@ -11,6 +11,11 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 
 class UncaughtExceptionMapperTest {
@@ -56,6 +61,41 @@ class UncaughtExceptionMapperTest {
             assertTrue(response.getHeaderString(HttpHeaders.ALLOW).contains("GET"));
             assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
         }
+    }
+
+    @Test
+    void logMessagesAreEnglishAndKeepTheException() {
+        // Karar: istemciye giden mesajlar Türkçe, log'a düşenler İngilizce
+        List<LogRecord> records = new ArrayList<>();
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord logRecord) {
+                records.add(logRecord);
+            }
+
+            @Override
+            public void flush() {
+                // kayıtlar bellekte tutulur
+            }
+
+            @Override
+            public void close() {
+                // kapatılacak kaynak yok
+            }
+        };
+        Logger logger = Logger.getLogger(UncaughtExceptionMapper.class.getName());
+        logger.addHandler(handler);
+        try {
+            IllegalStateException unexpected = new IllegalStateException("x");
+            mapper.toResponse(unexpected).close();
+            mapper.toResponse(new WebApplicationException(503)).close();
+        } finally {
+            logger.removeHandler(handler);
+        }
+
+        assertEquals(List.of("Unexpected error", "Server error"),
+                records.stream().map(LogRecord::getMessage).toList());
+        assertTrue(records.stream().allMatch(r -> r.getThrown() != null));
     }
 
     @Test
