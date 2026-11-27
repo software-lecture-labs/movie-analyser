@@ -1,4 +1,4 @@
-// Runs once, when the data volume is created for the first time.
+// Veri birimi ilk kez oluşturulduğunda yalnızca bir kez çalışır.
 // Uygulama kullanıcısı yalnızca uygulama veritabanında yetkilidir.
 // Entegrasyon testleri için ayrı bir test kullanıcısı, yalnızca test veritabanında (<veritabanı>_test) yetkilidir.
 const dbName = process.env.MONGO_INITDB_DATABASE;

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Index definitions for the MongoDB collections.
+ * MongoDB koleksiyonlarının indeks tanımları.
  *
- * <p>Jakarta NoSQL does not create indexes, so they are declared here and
- * applied with the MongoDB driver when the application starts.</p>
+ * <p>Jakarta NoSQL indeks oluşturmaz; bu yüzden indeksler burada tanımlanır ve
+ * uygulama başlarken MongoDB sürücüsüyle uygulanır.</p>
  */
 public final class MongoIndexes {
 
@@ -20,14 +20,14 @@ public final class MongoIndexes {
     private MongoIndexes() {
     }
 
-    /** Returns the indexes to create, grouped by collection name. */
+    /** Oluşturulacak indeksleri koleksiyon adına göre gruplanmış olarak döndürür. */
     public static Map<String, List<IndexModel>> definitions() {
         return Map.of(
                 REVIEWS, List.of(
-                        // A user can review the same movie only once.
+                        // Bir kullanıcı aynı filme yalnızca bir kez yorum yapabilir.
                         unique("uk_reviews_user_movie", "userId", "movieId"),
-                        // Paged review lists of a movie or a user, newest first; without these
-                        // a lookup by movieId alone would scan the whole collection.
+                        // Bir filmin veya kullanıcının sayfalı yorum listeleri, en yeni önce;
+                        // bunlar olmazsa yalnızca movieId ile arama tüm koleksiyonu tarardı.
                         newestFirst("ix_reviews_movie_created", "movieId"),
                         newestFirst("ix_reviews_user_created", "userId")),
                 USERS, List.of(
@@ -40,8 +40,8 @@ public final class MongoIndexes {
     }
 
     /**
-     * Equality on the given field, then createdAt descending with _id as a tie breaker,
-     * matching the sort order of the paged repository queries.
+     * Verilen alanda eşitlik, ardından createdAt azalan sırada ve eşitlik durumunda _id ile;
+     * sayfalı repository sorgularının sıralamasıyla aynıdır.
      */
     private static IndexModel newestFirst(String name, String field) {
         return new IndexModel(
