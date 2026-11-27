@@ -75,24 +75,24 @@ public class User {
 
     private static void validateUsername(String value) {
         if (value.length() < MIN_USERNAME_LENGTH || value.length() > MAX_USERNAME_LENGTH) {
-            throw new IllegalArgumentException("username must be between " + MIN_USERNAME_LENGTH
-                    + " and " + MAX_USERNAME_LENGTH + " characters");
+            throw new IllegalArgumentException("username " + MIN_USERNAME_LENGTH + " ile "
+                    + MAX_USERNAME_LENGTH + " karakter arasında olmalı");
         }
         if (!USERNAME_PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException(
-                    "username may contain only letters, digits, dot, underscore and hyphen");
+                    "username yalnızca harf, rakam, nokta, alt çizgi ve tire içerebilir");
         }
     }
 
     private static void validateEmail(String value) {
         if (!EMAIL_PATTERN.matcher(value).matches()) {
-            throw new IllegalArgumentException("email is not a valid address");
+            throw new IllegalArgumentException("email geçerli bir e-posta adresi değil");
         }
     }
 
     private static String requireNotBlank(String value, String name) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + " must not be blank");
+            throw new IllegalArgumentException(name + " boş olamaz");
         }
         return value.trim();
     }
