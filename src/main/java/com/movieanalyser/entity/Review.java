@@ -14,8 +14,9 @@ import java.util.Objects;
 import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
 
 /**
- * A user's rating and comment for a movie, stored in the "reviews" collection.
- * A user can review a movie only once; this is enforced by a unique index on (userId, movieId).
+ * Bir kullanıcının bir filme verdiği puan ve yorum; "reviews" koleksiyonunda saklanır.
+ * Bir kullanıcı bir filme yalnızca bir kez yorum yapabilir;
+ * bu, (userId, movieId) üzerindeki benzersiz indeksle sağlanır.
  */
 @Entity("reviews")
 public class Review {
@@ -24,7 +25,7 @@ public class Review {
     public static final int MAX_RATING = 10;
     public static final int MAX_COMMENT_LENGTH = 1000;
 
-    // Exposed as a String, stored as a MongoDB ObjectId so that lookups by id match
+    // Kodda String olarak görünür, MongoDB'de ObjectId olarak saklanır; böylece id ile arama eşleşir
     @Id
     @Convert(ObjectIdConverter.class)
     private String id;
@@ -54,10 +55,10 @@ public class Review {
     @Convert(InstantDateConverter.class)
     private Instant updatedAt;
 
-    // The implicit public no-arg constructor is used by the mapping layer to rebuild entities.
+    // Örtük public parametresiz constructor, eşleme katmanı entity'yi yeniden oluştururken kullanır.
 
     /**
-     * Creates a new review. The id stays null until the review is saved.
+     * Yeni bir yorum oluşturur. Yorum kaydedilene kadar id null kalır.
      */
     public static Review create(String userId, String movieId, int rating, String comment, Instant now) {
         requireNotBlank(userId, "userId");
@@ -78,7 +79,7 @@ public class Review {
     }
 
     /**
-     * Changes the rating and comment. Nothing is changed if the new values are invalid.
+     * Puanı ve yorumu değiştirir. Yeni değerler geçersizse hiçbir şey değişmez.
      */
     public void edit(int newRating, String newComment, Instant now) {
         validateRating(newRating);
@@ -91,9 +92,9 @@ public class Review {
     }
 
     /**
-     * MongoDB stores dates with millisecond precision, while clocks (for example
-     * Instant.now() on Linux) may return micro or nanoseconds. Truncating here keeps
-     * the in-memory value equal to the value read back from the database.
+     * MongoDB tarihleri milisaniye hassasiyetinde saklar; saatler ise (örneğin
+     * Linux'ta Instant.now()) mikro veya nanosaniye döndürebilir. Burada kesmek,
+     * bellekteki değerin veritabanından okunan değerle aynı kalmasını sağlar.
      */
     private static Instant toStoredPrecision(Instant value) {
         return value.truncatedTo(ChronoUnit.MILLIS);

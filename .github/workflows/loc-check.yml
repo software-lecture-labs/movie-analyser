@@ -1,10 +1,10 @@
-# Checks line limits of the files changed in the pull request
+# Pull request'te değişen dosyaların satır sınırlarını kontrol eder
 name: loc-check
 
 on:
   pull_request:
     branches: [dev, main]
-    # "edited" re-runs the check when the target branch of a PR is changed
+    # "edited", PR'ın hedef branch'i değiştirildiğinde kontrolü yeniden çalıştırır
     types: [opened, edited, synchronize, reopened]
 
 permissions:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Full history is needed to diff against the target branch
+          # Hedef branch ile karşılaştırma yapabilmek için tüm geçmiş gerekir
           fetch-depth: 0
 
       - name: Check line limits

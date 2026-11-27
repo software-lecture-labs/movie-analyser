@@ -1,10 +1,10 @@
-# Runs the *IT tests against the same MongoDB replica set used for local development
+# *IT testlerini yerel geliştirmede kullanılan MongoDB replica set'inin aynısına karşı çalıştırır
 name: integration-tests
 
 on:
   pull_request:
     branches: [dev, main]
-    # "edited" re-runs the check when the target branch of a PR is changed
+    # "edited", PR'ın hedef branch'i değiştirildiğinde kontrolü yeniden çalıştırır
     types: [opened, edited, synchronize, reopened]
 
 permissions:
