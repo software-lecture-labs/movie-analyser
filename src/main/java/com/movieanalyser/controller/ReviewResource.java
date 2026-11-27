@@ -50,7 +50,8 @@ public class ReviewResource {
     @POST
     public Response create(@Valid @NotNull CreateReviewRequest request, @Context UriInfo uriInfo) {
         Review review = reviews.addReview(request.userId(), request.movieId(), request.rating(), request.comment());
-        URI location = URI.create(uriInfo.getAbsolutePath() + "/" + review.getId());
+        // UriBuilder yol sonundaki "/" ile çift "/" oluşmasını engeller
+        URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(review.getId())).build();
         return Response.created(location).entity(ReviewMapper.toResponse(review)).build();
     }
 

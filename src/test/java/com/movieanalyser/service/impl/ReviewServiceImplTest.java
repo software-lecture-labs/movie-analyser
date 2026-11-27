@@ -13,6 +13,7 @@ import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
+import com.movieanalyser.service.MovieService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -38,11 +39,14 @@ class ReviewServiceImplTest {
     @Mock
     private ReviewRepository reviews;
 
+    @Mock
+    private MovieService movies;
+
     private ReviewServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new ReviewServiceImpl(transactions, reviews, Clock.fixed(NOW, ZoneOffset.UTC));
+        service = new ReviewServiceImpl(transactions, reviews, movies, Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
     @Test
