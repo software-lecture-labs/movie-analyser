@@ -1,4 +1,4 @@
-# Shared editor settings for every IDE on Windows and macOS
+# Windows ve macOS üzerindeki tüm IDE'ler için ortak editör ayarları
 root = true
 
 [*]
@@ -12,10 +12,10 @@ indent_size = 4
 [*.{yml,yaml,json,xml}]
 indent_size = 2
 
-# Markdown uses trailing spaces for line breaks
+# Markdown satır sonu için sondaki boşlukları kullanır
 [*.md]
 trim_trailing_whitespace = false
 
-# Windows-only scripts keep CRLF
+# Yalnızca Windows'a özgü betikler CRLF olarak kalır
 [*.{bat,cmd,ps1}]
 end_of_line = crlf

@@ -3,11 +3,11 @@ package com.movieanalyser.entity;
 import org.bson.types.ObjectId;
 
 /**
- * Checks the format of entity ids without exposing the MongoDB id type.
+ * Entity id'lerinin biçimini, MongoDB id tipini dışarı açmadan kontrol eder.
  *
- * <p>Ids are stored as MongoDB ObjectIds but handled as Strings everywhere else.
- * Services call this before a lookup, so that a malformed id from a request is
- * reported as "not found" instead of failing inside the mapping layer.</p>
+ * <p>Id'ler MongoDB ObjectId olarak saklanır, ancak başka her yerde String olarak işlenir.
+ * Servisler arama yapmadan önce bunu çağırır; böylece istekten gelen hatalı biçimli bir id,
+ * eşleme katmanında hata vermek yerine "bulunamadı" olarak bildirilir.</p>
  */
 public final class EntityIds {
 
@@ -15,7 +15,7 @@ public final class EntityIds {
     }
 
     /**
-     * Returns true if the value has the format of a stored id (24 hexadecimal characters).
+     * Değer saklanan bir id biçimindeyse (24 onaltılık karakter) true döndürür.
      */
     public static boolean isValid(String id) {
         return id != null && ObjectId.isValid(id);

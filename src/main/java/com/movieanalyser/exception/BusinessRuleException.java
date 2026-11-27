@@ -1,7 +1,7 @@
 package com.movieanalyser.exception;
 
 /**
- * Thrown when input breaks a business rule, for example a rating outside 1-10. Mapped to HTTP 400.
+ * Girdi bir iş kuralını çiğnediğinde fırlatılır; örneğin 1-10 dışındaki puan. HTTP 400'e eşlenir.
  */
 public class BusinessRuleException extends RuntimeException {
 
