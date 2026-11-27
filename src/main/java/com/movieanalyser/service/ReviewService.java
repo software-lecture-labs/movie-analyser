@@ -4,32 +4,32 @@ import com.movieanalyser.entity.Review;
 import jakarta.data.page.Page;
 
 /**
- * Adding, changing and deleting reviews. Every change also updates the movie's
- * average rating and rating count in the same transaction.
+ * Yorum ekleme, değiştirme ve silme. Her değişiklik, filmin ortalama puanını ve
+ * puan sayısını da aynı transaction içinde günceller.
  */
 public interface ReviewService {
 
     /**
-     * Adds a review of a movie by a user.
+     * Bir kullanıcının bir film için yorumunu ekler.
      *
-     * @throws com.movieanalyser.exception.ResourceNotFoundException if an id is malformed or the movie does not exist
-     * @throws com.movieanalyser.exception.BusinessRuleException if the rating or comment breaks a rule
-     * @throws com.movieanalyser.exception.ConflictException if the user already reviewed the movie
+     * @throws com.movieanalyser.exception.ResourceNotFoundException id hatalı biçimdeyse veya film yoksa
+     * @throws com.movieanalyser.exception.BusinessRuleException puan veya yorum bir kuralı çiğniyorsa
+     * @throws com.movieanalyser.exception.ConflictException kullanıcı filme zaten yorum yapmışsa
      */
     Review addReview(String userId, String movieId, int rating, String comment);
 
     /**
-     * Changes the rating and comment of a review.
+     * Bir yorumun puanını ve metnini değiştirir.
      *
-     * @throws com.movieanalyser.exception.ResourceNotFoundException if the id is malformed or the review does not exist
-     * @throws com.movieanalyser.exception.BusinessRuleException if the rating or comment breaks a rule
+     * @throws com.movieanalyser.exception.ResourceNotFoundException id hatalı biçimdeyse veya yorum yoksa
+     * @throws com.movieanalyser.exception.BusinessRuleException puan veya yorum bir kuralı çiğniyorsa
      */
     Review updateReview(String reviewId, int rating, String comment);
 
     /**
-     * Deletes a review.
+     * Bir yorumu siler.
      *
-     * @throws com.movieanalyser.exception.ResourceNotFoundException if the id is malformed or the review does not exist
+     * @throws com.movieanalyser.exception.ResourceNotFoundException id hatalı biçimdeyse veya yorum yoksa
      */
     void deleteReview(String reviewId);
 

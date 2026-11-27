@@ -5,8 +5,8 @@ import java.time.Instant;
 import java.util.Date;
 
 /**
- * Stores {@link Instant} values as BSON dates instead of strings, so that
- * MongoDB can sort and filter them by time.
+ * {@link Instant} değerlerini metin yerine BSON tarihi olarak saklar; böylece
+ * MongoDB bunları zamana göre sıralayabilir ve filtreleyebilir.
  */
 public class InstantDateConverter implements AttributeConverter<Instant, Date> {
 

@@ -5,10 +5,10 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * Connects integration tests to the MongoDB started by docker compose.
+ * Entegrasyon testlerini docker compose ile başlatılan MongoDB'ye bağlar.
  *
- * <p>Reads the same DB_* environment variables as the application. When a variable
- * is missing, the value from .env.example is used, which is what CI starts with.</p>
+ * <p>Uygulamayla aynı DB_* ortam değişkenlerini okur. Bir değişken tanımlı değilse
+ * .env.example içindeki değer kullanılır; CI de bu değerlerle başlar.</p>
  *
  * <p>Testler uygulamanın veritabanını değil, yanına açılan ayrı bir test veritabanını
  * ({@code DB_NAME + "_test"}) kullanır; böylece yarıda kalan bir test geliştiricinin
@@ -20,7 +20,7 @@ public final class MongoTestSupport {
     private MongoTestSupport() {
     }
 
-    /** Opens a new client; the caller closes it. */
+    /** Yeni bir istemci açar; kapatma sorumluluğu çağıranındır. */
     public static MongoClient client() {
         // Test kullanıcısı test veritabanında tanımlı, kimlik doğrulama da orada yapılır
         String url = "mongodb://" + testUserName() + ":" + env("DB_TEST_PASSWORD", "change-me-test")

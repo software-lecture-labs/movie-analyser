@@ -16,8 +16,8 @@ import java.time.Clock;
 import java.util.function.Supplier;
 
 /**
- * Checks input, applies the review rules and hands the writes to
- * {@link ReviewTransactionRepository}, which runs each of them in one transaction.
+ * Girdiyi kontrol eder, yorum kurallarını uygular ve yazma işlemlerini, her birini tek
+ * transaction içinde çalıştıran {@link ReviewTransactionRepository}'ye devreder.
  */
 @ApplicationScoped
 public class ReviewServiceImpl implements ReviewService {
@@ -36,9 +36,9 @@ public class ReviewServiceImpl implements ReviewService {
         this.clock = clock;
     }
 
-    /** Required by CDI to create a proxy for this application scoped bean. */
+    /** Application scope'lu bu bean için proxy oluşturabilmesi adına CDI tarafından gereklidir. */
     protected ReviewServiceImpl() {
-        // not used directly
+        // doğrudan kullanılmaz
     }
 
     @Override
@@ -94,14 +94,14 @@ public class ReviewServiceImpl implements ReviewService {
         return reviews.findByUserIdOrderByCreatedAtDescIdDesc(userId, Paging.of(page, size));
     }
 
-    /** A malformed id cannot belong to any stored entity, so it is reported as not found. */
+    /** Hatalı biçimli bir id hiçbir kayıtlı entity'ye ait olamaz; bu yüzden "bulunamadı" olarak bildirilir. */
     private static void requireValidId(String id, String entityName) {
         if (!EntityIds.isValid(id)) {
             throw new ResourceNotFoundException(entityName + " bulunamadı: " + id);
         }
     }
 
-    /** Turns a broken entity rule (for example a rating outside 1-10) into a validation error. */
+    /** Çiğnenen bir entity kuralını (örneğin 1-10 dışındaki puan) doğrulama hatasına çevirir. */
     private static Review applyRules(Supplier<Review> action) {
         try {
             return action.get();

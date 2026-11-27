@@ -1,10 +1,10 @@
-# Enforces the branch flow: feature -> dev -> main
+# Branch akışını zorunlu kılar: feature -> dev -> main
 name: source-branch
 
 on:
   pull_request:
     branches: [dev, main]
-    # "edited" re-runs the check when the target branch of a PR is changed
+    # "edited", PR'ın hedef branch'i değiştirildiğinde kontrolü yeniden çalıştırır
     types: [opened, edited, synchronize, reopened]
 
 permissions:

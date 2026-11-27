@@ -17,7 +17,7 @@ class MongoIndexesTest {
     void reviewsHasUniqueUserMovieIndex() {
         IndexModel index = findByName(MongoIndexes.REVIEWS, "uk_reviews_user_movie");
 
-        // Field order matters for a compound index; the JSON form keeps that order.
+        // Bileşik indekste alan sırası önemlidir; JSON biçimi bu sırayı korur.
         assertEquals(new Document("userId", 1).append("movieId", 1).toJson(), keysOf(index));
         assertTrue(index.getOptions().isUnique());
     }
@@ -26,7 +26,7 @@ class MongoIndexesTest {
     void reviewsHasMovieListingIndexSortedByNewest() {
         IndexModel index = findByName(MongoIndexes.REVIEWS, "ix_reviews_movie_created");
 
-        // Equality on movieId, then the listing order (newest first, id as tie breaker)
+        // movieId üzerinde eşitlik, ardından listeleme sırası (en yeni önce, eşitlikte id)
         assertEquals(new Document("movieId", 1).append("createdAt", -1).append("_id", -1).toJson(),
                 keysOf(index));
         assertNotEquals(Boolean.TRUE, index.getOptions().isUnique());

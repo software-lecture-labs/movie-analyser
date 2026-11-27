@@ -21,7 +21,7 @@
         </properties>
     </rule>
 
-    <!-- org.bson.Document implements Map, but it is the driver's standard document type -->
+    <!-- org.bson.Document, Map arayüzünü uygular ancak sürücünün standart belge tipidir -->
     <rule ref="category/java/bestpractices.xml/LooseCoupling">
         <properties>
             <property name="allowedTypes" value="java.util.Properties,org.bson.Document"/>
