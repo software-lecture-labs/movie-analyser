@@ -1,10 +1,10 @@
-# Static analysis with Checkstyle and PMD; any violation fails the job
+# Checkstyle ve PMD ile statik analiz; herhangi bir ihlal job'ı başarısız yapar
 name: lint
 
 on:
   pull_request:
     branches: [dev, main]
-    # "edited" re-runs the check when the target branch of a PR is changed
+    # "edited", PR'ın hedef branch'i değiştirildiğinde kontrolü yeniden çalıştırır
     types: [opened, edited, synchronize, reopened]
 
 permissions:

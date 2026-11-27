@@ -1,7 +1,7 @@
 package com.movieanalyser.exception;
 
 /**
- * Thrown when a requested resource (user, movie, review) does not exist. Mapped to HTTP 404.
+ * İstenen kaynak (kullanıcı, film, yorum) mevcut olmadığında fırlatılır. HTTP 404'e eşlenir.
  */
 public class ResourceNotFoundException extends RuntimeException {
 

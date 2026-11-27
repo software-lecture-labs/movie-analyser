@@ -103,7 +103,7 @@ class ReviewTest {
 
     @Test
     void createTruncatesTimestampsToMilliseconds() {
-        // Clocks on Linux report microseconds or nanoseconds; BSON dates keep milliseconds
+        // Linux'taki saatler mikro veya nanosaniye döndürür; BSON tarihleri milisaniye tutar
         Instant precise = Instant.parse("2026-11-25T10:00:00.123456789Z");
         Instant millis = Instant.parse("2026-11-25T10:00:00.123Z");
 

@@ -8,31 +8,30 @@ import jakarta.data.repository.Repository;
 import java.util.Optional;
 
 /**
- * Data access for reviews. The implementation is generated at runtime;
- * queries, including their sort order, are derived from the method names.
+ * Yorumlara veri erişimi. Uygulama çalışma zamanında üretilir;
+ * sorgular, sıralamaları dahil, metot adlarından türetilir.
  *
- * <p>Review lists are paged and sorted newest first, with the id as a tie breaker
- * so that pages stay stable when several reviews share the same timestamp.
- * Matching indexes are declared in {@code MongoIndexes}. The sort order is part of
- * the method name because the @OrderBy annotation is not supported on derived
- * queries by the current mapping implementation.</p>
+ * <p>Yorum listeleri sayfalıdır ve en yeni önce sıralanır; birden fazla yorum aynı
+ * zaman damgasını paylaştığında sayfaların kararlı kalması için id eşitlik bozucu olarak kullanılır.
+ * Eşleşen indeksler {@code MongoIndexes} içinde tanımlıdır. Sıralama metot adının bir parçasıdır;
+ * çünkü mevcut eşleme uygulaması @OrderBy anotasyonunu türetilmiş sorgularda desteklemez.</p>
  */
 @Repository
 public interface ReviewRepository extends CrudRepository<Review, String> {
 
     /**
-     * One page of the reviews written for a movie, newest first.
+     * Bir film için yazılan yorumların bir sayfası, en yeni önce.
      */
     Page<Review> findByMovieIdOrderByCreatedAtDescIdDesc(String movieId, PageRequest pageRequest);
 
     /**
-     * One page of the reviews written by a user, newest first.
+     * Bir kullanıcının yazdığı yorumların bir sayfası, en yeni önce.
      */
     Page<Review> findByUserIdOrderByCreatedAtDescIdDesc(String userId, PageRequest pageRequest);
 
     /**
-     * The review a user wrote for a movie, if any. There is at most one,
-     * guaranteed by the unique index on (userId, movieId).
+     * Bir kullanıcının bir film için yazdığı yorum, varsa. En fazla bir tane vardır;
+     * bu (userId, movieId) üzerindeki benzersiz indeksle garanti edilir.
      */
     Optional<Review> findByUserIdAndMovieId(String userId, String movieId);
 }
