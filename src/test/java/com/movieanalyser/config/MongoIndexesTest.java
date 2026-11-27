@@ -58,8 +58,17 @@ class MongoIndexesTest {
     }
 
     @Test
+    void moviesHasTitleIndexForSortedListing() {
+        IndexModel index = findByName(MongoIndexes.MOVIES, "ix_movies_title");
+
+        // Film listesi başlığa, aynı başlıklarda id'ye göre sıralanıyor
+        assertEquals(new Document("titleLower", 1).append("_id", 1).toJson(), keysOf(index));
+    }
+
+    @Test
     void definitionsCoverOnlyKnownCollections() {
-        assertEquals(Set.of(MongoIndexes.REVIEWS, MongoIndexes.USERS), MongoIndexes.definitions().keySet());
+        assertEquals(Set.of(MongoIndexes.REVIEWS, MongoIndexes.USERS, MongoIndexes.MOVIES),
+                MongoIndexes.definitions().keySet());
     }
 
     private static IndexModel findByName(String collection, String name) {

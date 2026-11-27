@@ -16,6 +16,7 @@ public final class MongoIndexes {
 
     public static final String REVIEWS = "reviews";
     public static final String USERS = "users";
+    public static final String MOVIES = "movies";
 
     private MongoIndexes() {
     }
@@ -32,7 +33,10 @@ public final class MongoIndexes {
                         newestFirst("ix_reviews_user_created", "userId")),
                 USERS, List.of(
                         unique("uk_users_username", "username"),
-                        unique("uk_users_email", "email")));
+                        unique("uk_users_email", "email")),
+                // Film listesi başlığa (aynı başlıkta id'ye) göre sıralı; index olmadan her sayfa bellekte sıralanır
+                MOVIES, List.of(new IndexModel(
+                        Indexes.ascending("titleLower", "_id"), new IndexOptions().name("ix_movies_title"))));
     }
 
     private static IndexModel unique(String name, String... fields) {
