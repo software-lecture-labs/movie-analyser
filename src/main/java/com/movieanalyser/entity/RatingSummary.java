@@ -1,13 +1,13 @@
 package com.movieanalyser.entity;
 
 /**
- * Average rating and number of ratings of a movie.
+ * Bir filmin ortalama puanı ve puan sayısı.
  *
- * <p>Immutable: every change returns a new summary. The average is recalculated
- * from the previous average and count, so the individual ratings are not needed.</p>
+ * <p>Değiştirilemez (immutable): her değişiklik yeni bir özet döndürür. Ortalama,
+ * önceki ortalama ve sayıdan yeniden hesaplanır; bu yüzden tek tek puanlara gerek yoktur.</p>
  *
- * @param average the average rating, 0.0 when there are no ratings
- * @param count   the number of ratings
+ * @param average ortalama puan, puan yoksa 0.0
+ * @param count   puan sayısı
  */
 public record RatingSummary(double average, int count) {
 
@@ -17,18 +17,18 @@ public record RatingSummary(double average, int count) {
         }
     }
 
-    /** A movie without ratings. */
+    /** Hiç puanı olmayan bir film. */
     public static RatingSummary empty() {
         return new RatingSummary(0.0, 0);
     }
 
-    /** The summary after a new rating is added. */
+    /** Yeni bir puan eklendikten sonraki özet. */
     public RatingSummary add(int rating) {
         int newCount = count + 1;
         return new RatingSummary((double) (total() + rating) / newCount, newCount);
     }
 
-    /** The summary after an existing rating is removed. */
+    /** Mevcut bir puan silindikten sonraki özet. */
     public RatingSummary remove(int rating) {
         requireRatings();
         int newCount = count - 1;
@@ -38,16 +38,16 @@ public record RatingSummary(double average, int count) {
         return new RatingSummary((double) (total() - rating) / newCount, newCount);
     }
 
-    /** The summary after an existing rating is changed; the count stays the same. */
+    /** Mevcut bir puan değiştirildikten sonraki özet; puan sayısı aynı kalır. */
     public RatingSummary replace(int oldRating, int newRating) {
         requireRatings();
         return new RatingSummary((double) (total() - oldRating + newRating) / count, count);
     }
 
     /**
-     * The sum of all ratings. Ratings are whole numbers, so the sum is too; rounding
-     * removes the floating point error of average * count, which would otherwise
-     * build up over many changes (4.500000000000001 instead of 4.5).
+     * Tüm puanların toplamı. Puanlar tam sayı olduğu için toplam da tam sayıdır; yuvarlama,
+     * ortalama * sayı işleminden doğan kayan nokta hatasını giderir. Aksi halde bu hata
+     * çok sayıda değişiklikte birikirdi (4.5 yerine 4.500000000000001).
      */
     private long total() {
         return Math.round(average * count);

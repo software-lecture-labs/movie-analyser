@@ -15,7 +15,7 @@ class MongoConnectionIT {
         try (MongoClient client = MongoTestSupport.client()) {
             Map<String, Object> hello = MongoTestSupport.database(client).runCommand(new Document("hello", 1));
 
-            // Multi-document transactions need a replica set with a writable primary
+            // Çok belgeli transaction'lar, yazılabilir bir primary'ye sahip replica set gerektirir
             assertEquals("rs0", hello.get("setName"));
             assertEquals(Boolean.TRUE, hello.get("isWritablePrimary"));
         }

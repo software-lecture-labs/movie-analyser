@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Checks line limits: .java files <= 500 lines, other text files <= 1000 lines.
+# Satır sınırlarını kontrol eder: .java dosyaları <= 500 satır, diğer metin dosyaları <= 1000 satır.
 #
-# Usage:
-#   bash scripts/check-loc.sh              checks every tracked file
-#   bash scripts/check-loc.sh origin/dev   checks files added or changed since origin/dev
+# Kullanım:
+#   bash scripts/check-loc.sh              takip edilen tüm dosyaları kontrol eder
+#   bash scripts/check-loc.sh origin/dev   origin/dev'den beri eklenen veya değişen dosyaları kontrol eder
 set -euo pipefail
 
 readonly JAVA_LIMIT=500
 readonly OTHER_LIMIT=1000
 
-# core.quotePath=false keeps non-ASCII file names (for example Turkish characters)
-# readable; otherwise git quotes them and the files would be skipped silently.
+# core.quotePath=false ASCII olmayan dosya adlarının (örneğin Türkçe karakterler)
+# okunabilir kalmasını sağlar; aksi halde git bunları tırnaklar ve dosyalar sessizce atlanırdı.
 if [ $# -gt 0 ]; then
   files=$(git -c core.quotePath=false diff --name-only --diff-filter=ACMR "$1...HEAD")
 else
@@ -22,7 +22,7 @@ checked=0
 while IFS= read -r file; do
   [ -n "$file" ] || continue
   [ -f "$file" ] || continue
-  # Skip binary files (images, archives); an empty file has nothing to check
+  # İkili dosyaları (görseller, arşivler) atla; boş dosyada kontrol edilecek bir şey yok
   [ -s "$file" ] || continue
   grep -Iq . "$file" || continue
 
