@@ -7,7 +7,6 @@ import com.movieanalyser.mapper.ReviewMapper;
 import com.movieanalyser.service.ReviewService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -38,8 +37,10 @@ public class UserReviewsResource {
     // Kullanıcı servisi henüz yok; o gelince olmayan kullanıcı için 404 kontrolü eklenecek
     @GET
     public PageResponse<ReviewResponse> list(@PathParam("userId") String userId,
-                                             @QueryParam("page") @DefaultValue("1") int page,
-                                             @QueryParam("size") @DefaultValue("20") int size) {
-        return PageMapper.toResponse(reviews.listByUser(userId, page, size), ReviewMapper::toResponse);
+                                             @QueryParam("page") String page,
+                                             @QueryParam("size") String size) {
+        return PageMapper.toResponse(
+                reviews.listByUser(userId, QueryParams.page(page), QueryParams.size(size)),
+                ReviewMapper::toResponse);
     }
 }

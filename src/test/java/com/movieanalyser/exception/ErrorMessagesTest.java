@@ -7,6 +7,7 @@ import com.movieanalyser.entity.Review;
 import com.movieanalyser.repository.MovieRepository;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
+import com.movieanalyser.service.MovieService;
 import com.movieanalyser.service.impl.MovieServiceImpl;
 import com.movieanalyser.service.impl.ReviewServiceImpl;
 import java.time.Clock;
@@ -26,7 +27,8 @@ class ErrorMessagesTest {
     private final MovieServiceImpl movieService =
             new MovieServiceImpl(Mockito.mock(MovieRepository.class), Clock.systemUTC());
     private final ReviewServiceImpl reviewService = new ReviewServiceImpl(
-            Mockito.mock(ReviewTransactionRepository.class), Mockito.mock(ReviewRepository.class), Clock.systemUTC());
+            Mockito.mock(ReviewTransactionRepository.class), Mockito.mock(ReviewRepository.class),
+            Mockito.mock(MovieService.class), Clock.systemUTC());
 
     @Test
     void movieNotFoundMessage() {

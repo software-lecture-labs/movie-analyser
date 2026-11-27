@@ -12,14 +12,13 @@ import com.movieanalyser.dto.PageResponse;
 import com.movieanalyser.dto.ReviewResponse;
 import com.movieanalyser.dto.UpdateReviewRequest;
 import com.movieanalyser.entity.Review;
-import com.movieanalyser.exception.ResourceNotFoundException;
-import com.movieanalyser.service.MovieService;
+import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.service.ReviewService;
 import jakarta.data.page.Page;
 import jakarta.data.page.PageRequest;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,6 @@ class ReviewResourcesTest {
     @Mock
     private ReviewService reviews;
 
-    @Mock
-    private MovieService movies;
-
     private static Review review(int rating) {
         return Review.create(USER_ID, MOVIE_ID, rating, "yorum", NOW);
     }
@@ -50,7 +46,7 @@ class ReviewResourcesTest {
     void createReturns201WithBody() {
         when(reviews.addReview(USER_ID, MOVIE_ID, 8, "yorum")).thenReturn(review(8));
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getAbsolutePath()).thenReturn(URI.create("http://localhost/api/reviews"));
+        when(uriInfo.getAbsolutePathBuilder()).thenReturn(UriBuilder.fromUri("http://localhost/api/reviews"));
 
         try (Response response = new ReviewResource(reviews)
                 .create(new CreateReviewRequest(USER_ID, MOVIE_ID, 8, "yorum"), uriInfo)) {
@@ -83,25 +79,21 @@ class ReviewResourcesTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void movieReviewsChecksMovieThenListsReviews() {
+    void movieReviewsListsReviews() {
         Page<Review> page = mock(Page.class);
         when(page.content()).thenReturn(List.of(review(7)));
         when(page.pageRequest()).thenReturn(PageRequest.ofPage(1).size(20));
         when(reviews.listByMovie(MOVIE_ID, 1, 20)).thenReturn(page);
 
-        PageResponse<ReviewResponse> response = new MovieReviewsResource(movies, reviews).list(MOVIE_ID, 1, 20);
+        PageResponse<ReviewResponse> response = new MovieReviewsResource(reviews).list(MOVIE_ID, null, null);
 
-        // Film yoksa getMovie 404 fırlatır; burada var
-        verify(movies).getMovie(MOVIE_ID);
         assertEquals(7, response.content().get(0).rating());
     }
 
     @Test
-    void movieReviewsOfMissingMovieIs404WithoutListing() {
-        when(movies.getMovie(MOVIE_ID)).thenThrow(new ResourceNotFoundException("Movie not found"));
-
-        MovieReviewsResource resource = new MovieReviewsResource(movies, reviews);
-        assertThrows(ResourceNotFoundException.class, () -> resource.list(MOVIE_ID, 1, 20));
+    void movieReviewsWithNonNumericSizeIs400() {
+        MovieReviewsResource resource = new MovieReviewsResource(reviews);
+        assertThrows(BusinessRuleException.class, () -> resource.list(MOVIE_ID, "1", "abc"));
         verifyNoInteractions(reviews);
     }
 
@@ -113,6 +105,6 @@ class ReviewResourcesTest {
         when(page.pageRequest()).thenReturn(PageRequest.ofPage(1).size(20));
         when(reviews.listByUser(USER_ID, 1, 20)).thenReturn(page);
 
-        assertEquals(5, new UserReviewsResource(reviews).list(USER_ID, 1, 20).content().get(0).rating());
+        assertEquals(5, new UserReviewsResource(reviews).list(USER_ID, "1", "20").content().get(0).rating());
     }
 }

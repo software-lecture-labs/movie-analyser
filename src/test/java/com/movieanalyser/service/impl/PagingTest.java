@@ -29,6 +29,18 @@ class PagingTest {
     }
 
     @Test
+    void rejectsPageBeyondLimit() {
+        // Çok büyük sayfa numarası veritabanında int taşmasına ve 500'e yol açıyordu
+        assertThrows(BusinessRuleException.class, () -> Paging.of(Paging.MAX_PAGE + 1, Paging.MAX_SIZE));
+        assertThrows(BusinessRuleException.class, () -> Paging.of(Integer.MAX_VALUE, 1));
+    }
+
+    @Test
+    void acceptsLastAllowedPage() {
+        assertEquals(Paging.MAX_PAGE, Paging.of(Paging.MAX_PAGE, Paging.MAX_SIZE).page());
+    }
+
+    @Test
     void rejectsSizeBelowOne() {
         assertThrows(BusinessRuleException.class, () -> Paging.of(1, 0));
     }
