@@ -1,6 +1,6 @@
-# Local MongoDB for development. Values come from the .env file.
-# MongoDB runs as a single-node replica set because multi-document
-# transactions are only available on replica sets.
+# Geliştirme için yerel MongoDB. Değerler .env dosyasından gelir.
+# MongoDB tek düğümlü bir replica set olarak çalışır; çünkü çok belgeli
+# transaction'lar yalnızca replica set'lerde kullanılabilir.
 services:
   mongodb:
     image: mongo:8.0
@@ -10,11 +10,14 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_NAME}
-      # Read by the init script to create the application user
+      # Başlangıç betiği tarafından uygulama kullanıcısını oluşturmak için okunur
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-    # A replica set with authentication needs a key file; it is generated
-    # inside the container so nothing secret is stored in the repository.
+      # Test kullanıcısı (isteğe bağlı); boşsa oluşturulmaz
+      DB_TEST_USER: ${DB_TEST_USER:-}
+      DB_TEST_PASSWORD: ${DB_TEST_PASSWORD:-}
+    # Kimlik doğrulamalı bir replica set anahtar dosyası gerektirir; bu dosya
+    # konteynerin içinde üretilir, böylece repoda gizli hiçbir şey saklanmaz.
     entrypoint:
       - bash
       - -c
@@ -24,13 +27,13 @@ services:
         chown 999:999 /etc/mongo-keyfile
         exec docker-entrypoint.sh mongod --replSet rs0 --keyFile /etc/mongo-keyfile --bind_ip_all
     ports:
-      # Bound to localhost only, so the database is not reachable from the local network
+      # Yalnızca localhost'a bağlanır; böylece veritabanına yerel ağdan erişilemez
       - "127.0.0.1:${DB_PORT:-27017}:27017"
     volumes:
       - mongodb-data:/data/db
       - ./docker/mongo/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
     healthcheck:
-      # Initiates the replica set on first run, then reports its status
+      # İlk çalıştırmada replica set'i başlatır, ardından durumunu bildirir
       test:
         - CMD-SHELL
         - >-

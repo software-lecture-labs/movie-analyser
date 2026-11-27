@@ -16,6 +16,13 @@ class Pbkdf2PasswordHasherTest {
     private final Pbkdf2PasswordHasher hasher = new Pbkdf2PasswordHasher(1_000);
 
     @Test
+    void defaultIterationsFollowOwaspRecommendationForSha256() {
+        // OWASP Password Storage Cheat Sheet: PBKDF2-HMAC-SHA256 için 600.000
+        // (210.000, PBKDF2-HMAC-SHA512 için önerilen değer)
+        assertEquals(600_000, Pbkdf2PasswordHasher.DEFAULT_ITERATIONS);
+    }
+
+    @Test
     void hashDoesNotContainThePlainPassword() {
         String hash = hasher.hash(PASSWORD);
 

@@ -6,6 +6,7 @@ import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jnosql.databases.mongodb.mapping.ObjectIdConverter;
@@ -22,6 +23,10 @@ public class User {
     public static final int MAX_USERNAME_LENGTH = 30;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+
+    // Kullanıcı adı URL'de ve ekranda kullanılacağı için yalnızca İngilizce harf, rakam, nokta,
+    // alt çizgi ve tire; boşluk, @, emoji ve Türkçe karakter olmaz
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9._-]+$");
 
     // Kodda String olarak görünür, MongoDB'de ObjectId olarak saklanır; böylece id ile arama eşleşir
     @Id
@@ -49,7 +54,10 @@ public class User {
      */
     public static User create(String username, String email, String passwordHash, Instant now) {
         String cleanUsername = requireNotBlank(username, "username");
-        String cleanEmail = requireNotBlank(email, "email");
+        // E-posta küçük harfle saklanır; böylece Selim@example.com ile selim@Example.com aynı
+        // değer olur ve unique index ikisini de yakalar. Locale.ROOT, Türkçe yerel ayarda
+        // "I" harfinin noktasız "ı" olmasını önler.
+        String cleanEmail = requireNotBlank(email, "email").toLowerCase(Locale.ROOT);
         requireNotBlank(passwordHash, "passwordHash");
         validateUsername(cleanUsername);
         validateEmail(cleanEmail);
@@ -69,6 +77,10 @@ public class User {
         if (value.length() < MIN_USERNAME_LENGTH || value.length() > MAX_USERNAME_LENGTH) {
             throw new IllegalArgumentException("username must be between " + MIN_USERNAME_LENGTH
                     + " and " + MAX_USERNAME_LENGTH + " characters");
+        }
+        if (!USERNAME_PATTERN.matcher(value).matches()) {
+            throw new IllegalArgumentException(
+                    "username may contain only letters, digits, dot, underscore and hyphen");
         }
     }
 

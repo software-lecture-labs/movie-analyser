@@ -22,14 +22,14 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 /**
- * Writes reviews and keeps the movie's average rating and rating count in step,
- * each operation in a single MongoDB transaction.
+ * Yorumları yazar ve filmin ortalama puanı ile puan sayısını tutarlı tutar;
+ * her işlem tek bir MongoDB transaction'ı içinde yapılır.
  *
- * <p>Repository writes of the mapping layer do not join a driver session, so this
- * class uses the driver directly. Documents are written in the same shape the
- * mapping layer reads: ObjectId as _id and BSON dates for timestamps. When two
- * transactions change the same movie at the same time, MongoDB reports a write
- * conflict and the driver retries the losing transaction, so no update is lost.</p>
+ * <p>Eşleme katmanının repository yazmaları sürücü oturumuna katılmaz; bu yüzden bu
+ * sınıf sürücüyü doğrudan kullanır. Belgeler eşleme katmanının okuduğu biçimde yazılır:
+ * _id olarak ObjectId, zaman damgaları için BSON tarihleri. İki transaction aynı filmi
+ * aynı anda değiştirirse MongoDB yazma çakışması bildirir ve sürücü kaybeden
+ * transaction'ı yeniden dener; böylece hiçbir güncelleme kaybolmaz.</p>
  */
 @ApplicationScoped
 public class ReviewTransactionRepository {
@@ -55,17 +55,17 @@ public class ReviewTransactionRepository {
         this.movies = database.getCollection("movies");
     }
 
-    /** Required by CDI to create a proxy for this application scoped bean. */
+    /** Application scope'lu bu bean için proxy oluşturabilmesi adına CDI tarafından gereklidir. */
     protected ReviewTransactionRepository() {
-        // not used directly
+        // doğrudan kullanılmaz
     }
 
     /**
-     * Stores a new review and adds its rating to the movie.
+     * Yeni bir yorumu kaydeder ve puanını filme ekler.
      *
-     * @return the id of the stored review
-     * @throws ConflictException if the user already reviewed this movie
-     * @throws ResourceNotFoundException if the movie does not exist; nothing is stored
+     * @return kaydedilen yorumun id'si
+     * @throws ConflictException kullanıcı bu filme zaten yorum yapmışsa
+     * @throws ResourceNotFoundException film yoksa; hiçbir şey kaydedilmez
      */
     public String add(Review review) {
         ObjectId id = new ObjectId();
@@ -79,7 +79,7 @@ public class ReviewTransactionRepository {
         try {
             inTransaction(session -> {
                 reviews.insertOne(session, document);
-                // Inserted first on purpose: a missing movie aborts the transaction and the insert is undone
+                // Bilerek önce eklenir: film yoksa transaction iptal edilir ve ekleme geri alınır
                 changeRating(session, review.getMovieId(), summary -> summary.add(review.getRating()));
                 return null;
             });
@@ -93,9 +93,9 @@ public class ReviewTransactionRepository {
     }
 
     /**
-     * Changes the rating and comment of a review and replaces the old rating in the movie's average.
+     * Bir yorumun puanını ve metnini değiştirir; filmin ortalamasındaki eski puanı yenisiyle değiştirir.
      *
-     * @throws ResourceNotFoundException if the review or its movie does not exist
+     * @throws ResourceNotFoundException yorum veya filmi yoksa
      */
     public void update(String reviewId, int rating, String comment, Instant updatedAt) {
         inTransaction(session -> {
@@ -111,9 +111,9 @@ public class ReviewTransactionRepository {
     }
 
     /**
-     * Deletes a review and removes its rating from the movie's average.
+     * Bir yorumu siler ve puanını filmin ortalamasından çıkarır.
      *
-     * @throws ResourceNotFoundException if the review or its movie does not exist
+     * @throws ResourceNotFoundException yorum veya filmi yoksa
      */
     public void delete(String reviewId) {
         inTransaction(session -> {
@@ -127,7 +127,7 @@ public class ReviewTransactionRepository {
 
     private void inTransaction(Function<ClientSession, Void> work) {
         try (ClientSession session = client.startSession()) {
-            // Commits when work returns, aborts when it throws, retries on transient errors
+            // work döndüğünde commit eder, hata fırlatırsa iptal eder, geçici hatalarda yeniden dener
             session.withTransaction(() -> work.apply(session));
         }
     }

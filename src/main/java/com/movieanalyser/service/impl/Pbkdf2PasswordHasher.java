@@ -20,7 +20,9 @@ import javax.crypto.spec.PBEKeySpec;
 @ApplicationScoped
 public class Pbkdf2PasswordHasher implements PasswordHasher {
 
-    static final int DEFAULT_ITERATIONS = 210_000;
+    // OWASP Password Storage Cheat Sheet'in PBKDF2-HMAC-SHA256 önerisi
+    // (210.000 SHA512 için önerilen değerdir, burada SHA256 kullanılıyor)
+    static final int DEFAULT_ITERATIONS = 600_000;
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final String PREFIX = "pbkdf2_sha256";
