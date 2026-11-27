@@ -1,16 +1,16 @@
-# Compiled class file
+# Derlenmiş class dosyaları
 *.class
 
-# Log file
+# Log dosyaları
 *.log
 
-# BlueJ files
+# BlueJ dosyaları
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Paket dosyaları
 *.jar
 *.war
 *.nar
@@ -19,7 +19,7 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Sanal makine çökme günlükleri, bkz. http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 
@@ -50,10 +50,10 @@ buildNumber.properties
 Thumbs.db
 desktop.ini
 
-# Local environment files (secrets stay on the machine)
+# Yerel ortam dosyaları (gizli bilgiler makinede kalır)
 .env
 .env.*
 !.env.example
 
-# Log directories
+# Log klasörleri
 logs/

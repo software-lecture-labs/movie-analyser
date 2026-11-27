@@ -49,7 +49,7 @@ class ReviewTransactionRepositoryIT {
     static void connect() {
         client = MongoTestSupport.client();
         database = MongoTestSupport.database(client);
-        // The unique index on (userId, movieId) is what turns a second review into a conflict
+        // İkinci yorumu çakışmaya çeviren şey (userId, movieId) üzerindeki benzersiz indekstir
         MongoIndexes.definitions().forEach((name, indexes) -> database.getCollection(name).createIndexes(indexes));
     }
 
@@ -105,7 +105,7 @@ class ReviewTransactionRepositoryIT {
 
         assertThrows(ResourceNotFoundException.class, () -> repository.add(review));
 
-        // The review was inserted before the movie lookup failed; the abort removed it
+        // Yorum, film araması başarısız olmadan önce eklenmişti; iptal onu geri aldı
         assertEquals(0, reviews.countDocuments(Filters.eq("movieId", missingMovieId)));
     }
 
@@ -161,7 +161,7 @@ class ReviewTransactionRepositoryIT {
 
         assertThrows(ResourceNotFoundException.class, () -> repository.update(id, 2, "changed", later));
 
-        // The review was updated before the movie lookup failed; the abort restored it
+        // Yorum, film araması başarısız olmadan önce güncellenmişti; iptal eski haline getirdi
         Document stored = reviews.find(Filters.eq("_id", new ObjectId(id))).first();
         assertNotNull(stored);
         assertEquals(8, stored.getInteger("rating"));
@@ -175,7 +175,7 @@ class ReviewTransactionRepositoryIT {
 
         assertThrows(ResourceNotFoundException.class, () -> repository.delete(id));
 
-        // The review was deleted before the movie lookup failed; the abort brought it back
+        // Yorum, film araması başarısız olmadan önce silinmişti; iptal onu geri getirdi
         assertNotNull(reviews.find(Filters.eq("_id", new ObjectId(id))).first());
     }
 
@@ -193,14 +193,14 @@ class ReviewTransactionRepositoryIT {
             Review review = review(newUserId(), rating);
             tasks.add(() -> repository.add(review));
         }
-        // All ten transactions change the same movie document at the same time
+        // On transaction'ın hepsi aynı film belgesini aynı anda değiştirir
         try (ExecutorService pool = Executors.newFixedThreadPool(10)) {
             for (Future<String> result : pool.invokeAll(tasks)) {
                 assertTrue(EntityIds.isValid(result.get()));
             }
         }
 
-        // 1 + 2 + ... + 10 = 55, so the average is 5.5 if no update was lost
+        // 1 + 2 + ... + 10 = 55; hiçbir güncelleme kaybolmadıysa ortalama 5.5 olur
         assertMovie(5.5, 10);
     }
 
