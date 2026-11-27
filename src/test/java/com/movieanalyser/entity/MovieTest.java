@@ -23,4 +23,36 @@ class MovieTest {
         assertEquals(0, movie.getRatingCount());
         assertEquals(0.0, movie.getAverageRating());
     }
+
+    @Test
+    void createStoresLowerCaseTitleForSearch() {
+        Movie movie = Movie.create("The Matrix", "Wachowski", 1999, null, null);
+
+        assertEquals("The Matrix", movie.getTitle());
+        assertEquals("the matrix", movie.getTitleLower());
+    }
+
+    @Test
+    void normalizeTitleIgnoresCaseAndSurroundingSpaces() {
+        assertEquals("the matrix", Movie.normalizeTitle("  The MATRIX "));
+    }
+
+    @Test
+    void normalizeTitleMakesTurkishCapitalDottedIMatchPlainI() {
+        // "İ" lower-cases to "i" followed by a combining dot; the dot must not break matching
+        assertEquals("istanbul", Movie.normalizeTitle("İSTANBUL"));
+        assertEquals("istanbul", Movie.normalizeTitle("istanbul"));
+    }
+
+    @Test
+    void normalizeTitleKeepsNullAsNull() {
+        assertNull(Movie.normalizeTitle(null));
+    }
+
+    @Test
+    void searchTermAndStoredTitleUseTheSameNormalization() {
+        Movie movie = Movie.create("Léon: The Professional", "Luc Besson", 1994, null, null);
+
+        assertEquals(Movie.normalizeTitle("LÉON: the professional"), movie.getTitleLower());
+    }
 }
