@@ -21,11 +21,11 @@ public interface MovieService {
     Movie getMovie(String id);
 
     /**
-     * Filmleri başlığa göre alfabetik sırayla, sayfa sayfa döndürür.
+     * Filmleri istenen sırayla, sayfa sayfa döndürür.
      *
      * @throws com.movieanalyser.exception.BusinessRuleException sayfa bilgisi geçersizse
      */
-    Page<Movie> listMovies(int page, int size);
+    Page<Movie> listMovies(int page, int size, MovieSort sort);
 
     /**
      * Başlığında arama metni geçen filmler; büyük/küçük harf ve Türkçe "İ" farkı gözetilmez.

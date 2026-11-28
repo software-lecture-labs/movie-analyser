@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Film Puanla - Movie Analyser</title>
+  <link rel="stylesheet" href="css/review.css">
+</head>
+<body>
+<main class="page">
+  <header class="page-header">
+    <h1>Film Puanla</h1>
+    <p class="subtitle">Bir film seçin, 1-10 arası puan verin; filmin ortalaması anında güncellenir.</p>
+  </header>
+
+  <section class="card" aria-labelledby="movie-heading">
+    <h2 id="movie-heading">Film</h2>
+    <label for="movie-select">Film seçin</label>
+    <select id="movie-select" required>
+      <option value="">Filmler yükleniyor...</option>
+    </select>
+    <p class="field-error" id="movie-error" role="alert"></p>
+
+    <div class="movie-summary" id="movie-summary" hidden>
+      <div class="movie-info">
+        <p class="movie-title" id="movie-title"></p>
+        <p class="movie-meta" id="movie-meta"></p>
+      </div>
+      <div class="score" id="score-box" aria-live="polite">
+        <span class="score-value" id="score-value">-</span>
+        <span class="score-detail" id="score-detail">Henüz puan yok</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="form-heading">
+    <h2 id="form-heading">Puan ve yorum</h2>
+    <form id="review-form" novalidate>
+      <label for="user-id">Kullanıcı id</label>
+      <input id="user-id" name="userId" type="text" autocomplete="off" spellcheck="false"
+             placeholder="ör. 6b0a0000000000000000a001" aria-describedby="user-hint">
+      <p class="hint" id="user-hint">Kullanıcı girişi henüz yok; kendi kullanıcı id'nizi yazın.</p>
+      <p class="field-error" id="userId-error" role="alert"></p>
+
+      <fieldset class="rating" aria-describedby="rating-error">
+        <legend>Puan</legend>
+        <div class="rating-options" id="rating-options"></div>
+      </fieldset>
+      <p class="field-error" id="rating-error" role="alert"></p>
+
+      <label for="comment">Yorum <span class="optional">(isteğe bağlı)</span></label>
+      <textarea id="comment" name="comment" rows="4" maxlength="1000"></textarea>
+      <p class="counter" id="comment-counter">0 / 1000</p>
+      <p class="field-error" id="comment-error" role="alert"></p>
+
+      <div class="actions">
+        <button type="submit" id="submit-button">Gönder</button>
+        <button type="button" id="update-button" class="secondary" hidden>Mevcut yorumumu güncelle</button>
+      </div>
+    </form>
+    <p class="message" id="form-message" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="card" aria-labelledby="reviews-heading">
+    <h2 id="reviews-heading">Son yorumlar</h2>
+    <ul class="review-list" id="review-list"></ul>
+    <p class="empty" id="reviews-empty">Bu film için henüz yorum yok.</p>
+  </section>
+</main>
+
+<script src="js/review-form-logic.js"></script>
+<script src="js/review-form.js"></script>
+</body>
+</html>

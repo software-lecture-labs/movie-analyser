@@ -11,6 +11,7 @@ import com.movieanalyser.dto.MovieResponse;
 import com.movieanalyser.dto.PageResponse;
 import com.movieanalyser.entity.Movie;
 import com.movieanalyser.service.MovieService;
+import com.movieanalyser.service.MovieSort;
 import jakarta.data.page.Page;
 import jakarta.data.page.PageRequest;
 import jakarta.ws.rs.core.Response;
@@ -64,7 +65,7 @@ class MovieResourceTest {
 
     @Test
     void listWithNonNumericPageIs400() {
-        assertThrows(com.movieanalyser.exception.BusinessRuleException.class, () -> resource.list("abc", null));
+        assertThrows(com.movieanalyser.exception.BusinessRuleException.class, () -> resource.list("abc", null, null));
     }
 
     @Test
@@ -73,9 +74,9 @@ class MovieResourceTest {
         Page<Movie> page = mock(Page.class);
         when(page.content()).thenReturn(List.of(Movie.create("A", "B", 2000, null, null)));
         when(page.pageRequest()).thenReturn(PageRequest.ofPage(1).size(20));
-        when(service.listMovies(1, 20)).thenReturn(page);
+        when(service.listMovies(1, 20, MovieSort.RATING)).thenReturn(page);
 
-        PageResponse<MovieResponse> response = resource.list("1", "20");
+        PageResponse<MovieResponse> response = resource.list("1", "20", "rating");
 
         assertEquals(1, response.content().size());
         assertEquals("A", response.content().get(0).title());

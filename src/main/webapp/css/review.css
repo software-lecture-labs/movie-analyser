@@ -1,0 +1,278 @@
+/* Puan/yorum sayfası */
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #c2410c;
+  --accent-soft: #ffedd5;
+  --error: #b91c1c;
+  --success: #15803d;
+  --border: #d2d2d7;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.page-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+}
+
+label,
+legend {
+  display: block;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+.rating-options input:focus-visible + label {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.hint,
+.counter,
+.optional {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin: 4px 0 0;
+}
+
+.counter {
+  text-align: right;
+}
+
+.field-error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+  min-height: 1em;
+}
+
+.movie-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.movie-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.movie-meta {
+  color: var(--muted);
+  margin: 0;
+}
+
+.score {
+  text-align: center;
+  min-width: 120px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+
+.score-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.score-detail {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Ortalama değişince kısa bir vurgu */
+.score.updated {
+  animation: pulse 0.8s ease-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.5); }
+  50% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(194, 65, 12, 0); }
+  100% { transform: scale(1); }
+}
+
+.rating {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rating-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Radyo düğmeleri gizlenir, etiketler puan kutusu gibi görünür */
+.rating-options input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.rating-options label {
+  margin: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rating-options input:checked + label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.message {
+  margin: 12px 0 0;
+  min-height: 1.5em;
+}
+
+.message.success {
+  color: var(--success);
+}
+
+.message.error {
+  color: var(--error);
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bg);
+}
+
+.review-list li:last-child {
+  border-bottom: none;
+}
+
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.review-rating {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.review-comment {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .movie-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
