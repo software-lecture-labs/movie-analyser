@@ -1,0 +1,327 @@
+/* Puan/yorum sayfası. Renkler theme.css'teki değişkenlerden gelir (açık/koyu tema). */
+:root {
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 16px 56px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+/* İri ve kalın başlık; vurgu kelimesi tema rengiyle */
+.hero-title {
+  margin: 0 0 14px;
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.hero-title .accent {
+  color: var(--accent);
+}
+
+.subtitle {
+  margin: 0 0 32px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 34em;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  /* Işık kartların arkasından bulanık görünür */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+label,
+legend {
+  display: block;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+.rating-options input:focus-visible + label {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.hint,
+.counter,
+.optional {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin: 4px 0 0;
+}
+
+.counter {
+  text-align: right;
+}
+
+.field-error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+  min-height: 1em;
+}
+
+.movie-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.movie-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.movie-meta {
+  color: var(--muted);
+  margin: 0;
+}
+
+.score {
+  text-align: center;
+  min-width: 130px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+
+.score-value {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.score-detail {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Ortalama değişince kısa bir vurgu */
+.score.updated {
+  animation: pulse 0.8s ease-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+.rating {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rating-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Radyo düğmeleri gizlenir, etiketler puan kutusu gibi görünür */
+.rating-options input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.rating-options label {
+  margin: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+
+.rating-options label:hover {
+  transform: translateY(-2px);
+}
+
+.rating-options input:checked + label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+/* Hap biçimli düğmeler */
+button {
+  padding: 12px 24px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.message {
+  margin: 12px 0 0;
+  min-height: 1.5em;
+}
+
+.message.success {
+  color: var(--success);
+}
+
+.message.error {
+  color: var(--error);
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.review-list li:last-child {
+  border-bottom: none;
+}
+
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.review-rating {
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.review-comment {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .movie-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score.updated {
+    animation: none;
+  }
+
+  .rating-options label,
+  button {
+    transition: none;
+  }
+}

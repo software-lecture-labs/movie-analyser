@@ -123,6 +123,17 @@ class ReviewTest {
     }
 
     @Test
+    void editWithoutCommentClearsTheOldComment() {
+        // PUT tam değiştirmedir: gövdede comment yoksa eski metin silinir (README'de yazıyor)
+        Review review = Review.create(USER_ID, MOVIE_ID, 5, "İlk izlenim", CREATED);
+
+        review.edit(7, null, EDITED);
+
+        assertNull(review.getComment());
+        assertEquals(7, review.getRating());
+    }
+
+    @Test
     void editRejectsInvalidRatingAndKeepsState() {
         Review review = Review.create(USER_ID, MOVIE_ID, 8, "Great movie", CREATED);
 

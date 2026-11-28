@@ -7,6 +7,7 @@ import com.movieanalyser.entity.Movie;
 import com.movieanalyser.mapper.MovieMapper;
 import com.movieanalyser.mapper.PageMapper;
 import com.movieanalyser.service.MovieService;
+import com.movieanalyser.service.MovieSort;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -46,11 +47,13 @@ public class MovieResource {
         // doğrudan kullanılmaz
     }
 
-    /** {@code ?page=} varsayılan 1, {@code ?size=} varsayılan 20. */
+    /** {@code ?page=} varsayılan 1, {@code ?size=} varsayılan 20, {@code ?sort=title|rating|year} varsayılan title. */
     @GET
-    public PageResponse<MovieResponse> list(@QueryParam("page") String page, @QueryParam("size") String size) {
+    public PageResponse<MovieResponse> list(@QueryParam("page") String page, @QueryParam("size") String size,
+                                            @QueryParam("sort") String sort) {
         return PageMapper.toResponse(
-                movies.listMovies(QueryParams.page(page), QueryParams.size(size)), MovieMapper::toResponse);
+                movies.listMovies(QueryParams.page(page), QueryParams.size(size), MovieSort.from(sort)),
+                MovieMapper::toResponse);
     }
 
     /** Başarılı olursa 201 ve yeni filmin adresi ({@code Location}) döner. */

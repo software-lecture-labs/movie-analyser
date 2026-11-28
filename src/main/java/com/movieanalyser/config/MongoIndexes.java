@@ -35,8 +35,15 @@ public final class MongoIndexes {
                         unique("uk_users_username", "username"),
                         unique("uk_users_email", "email")),
                 // Film listesi başlığa (aynı başlıkta id'ye) göre sıralı; index olmadan her sayfa bellekte sıralanır
-                MOVIES, List.of(new IndexModel(
-                        Indexes.ascending("titleLower", "_id"), new IndexOptions().name("ix_movies_title"))));
+                MOVIES, List.of(
+                        new IndexModel(Indexes.ascending("titleLower", "_id"),
+                                new IndexOptions().name("ix_movies_title")),
+                        // ?sort=rating: en yüksek puan önce, eşitlikte daha çok yorum
+                        new IndexModel(Indexes.compoundIndex(Indexes.descending("averageRating", "ratingCount"),
+                                Indexes.ascending("_id")), new IndexOptions().name("ix_movies_rating")),
+                        // ?sort=year: en yeni önce, aynı yılda başlığa göre
+                        new IndexModel(Indexes.compoundIndex(Indexes.descending("releaseYear"),
+                                Indexes.ascending("titleLower", "_id")), new IndexOptions().name("ix_movies_year"))));
     }
 
     private static IndexModel unique(String name, String... fields) {
