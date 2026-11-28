@@ -34,7 +34,7 @@ public class UncaughtExceptionMapper implements ExceptionMapper<Throwable> {
         if (exception instanceof WebApplicationException webException) {
             return fromWebApplicationException(webException);
         }
-        LOGGER.log(Level.SEVERE, "Beklenmeyen hata", exception);
+        LOGGER.log(Level.SEVERE, "Unexpected error", exception);
         return ErrorResponses.build(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_MESSAGE, uriInfo);
     }
 
@@ -43,7 +43,7 @@ public class UncaughtExceptionMapper implements ExceptionMapper<Throwable> {
         Response original = exception.getResponse();
         Response.StatusType status = original.getStatusInfo();
         if (status.getFamily() == Response.Status.Family.SERVER_ERROR) {
-            LOGGER.log(Level.SEVERE, "Sunucu hatası", exception);
+            LOGGER.log(Level.SEVERE, "Server error", exception);
         }
         return Response.fromResponse(original)
                 .entity(ErrorResponses.body(status, genericMessage(status.getStatusCode()), uriInfo))

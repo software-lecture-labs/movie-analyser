@@ -66,6 +66,22 @@ class MongoIndexesTest {
     }
 
     @Test
+    void moviesHasRatingIndexForBestRatedListing() {
+        IndexModel index = findByName(MongoIndexes.MOVIES, "ix_movies_rating");
+
+        assertEquals(new Document("averageRating", -1).append("ratingCount", -1).append("_id", 1).toJson(),
+                keysOf(index));
+    }
+
+    @Test
+    void moviesHasYearIndexForNewestListing() {
+        IndexModel index = findByName(MongoIndexes.MOVIES, "ix_movies_year");
+
+        assertEquals(new Document("releaseYear", -1).append("titleLower", 1).append("_id", 1).toJson(),
+                keysOf(index));
+    }
+
+    @Test
     void definitionsCoverOnlyKnownCollections() {
         assertEquals(Set.of(MongoIndexes.REVIEWS, MongoIndexes.USERS, MongoIndexes.MOVIES),
                 MongoIndexes.definitions().keySet());
