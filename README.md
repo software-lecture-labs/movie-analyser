@@ -135,7 +135,24 @@ Geliştirme aşamasında.
 
 ## API
 
-Geliştirme aşamasında.
+Geliştirme aşamasında; tam uç nokta tablosu ileride eklenecek. Bütün yollar `/movie-analyser/api` altındadır.
+
+### Yorumlar
+
+| Metot | Yol | Açıklama |
+|---|---|---|
+| `POST` | `/reviews` | Yorum ekler (`userId`, `movieId`, `rating` 1-10, isteğe bağlı `comment`). Aynı kullanıcı aynı filme ikinci kez yorum yaparsa `409`. |
+| `GET` | `/reviews/{id}` | Tek yorum |
+| `PUT` | `/reviews/{id}` | Yorumu günceller (`rating`, `comment`) |
+| `DELETE` | `/reviews/{id}` | Yorumu siler (`204`) |
+| `GET` | `/movies/{movieId}/reviews?page=&size=` | Filmin yorumları, en yeni önce |
+| `GET` | `/users/{userId}/reviews?page=&size=` | Kullanıcının yorumları, en yeni önce |
+
+Ekleme, güncelleme ve silme işlemleri filmin ortalama puanını ve değerlendirme sayısını aynı MongoDB transaction'ında günceller.
+
+**`PUT` tam değiştirmedir:** Gövdede gönderilmeyen alan boş sayılır. `comment` gönderilmezse mevcut yorum metni silinir; metni korumak için eski metin de gönderilmelidir.
+
+Kimlik doğrulama henüz yok; yorumun sahibi istek gövdesindeki `userId`'den alınır. Yetki kontrolleri #31'de takip ediliyor.
 
 ## Test
 
