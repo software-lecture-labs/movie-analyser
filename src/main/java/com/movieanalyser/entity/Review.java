@@ -103,20 +103,20 @@ public class Review {
     private static void validateRating(int value) {
         if (value < MIN_RATING || value > MAX_RATING) {
             throw new IllegalArgumentException(
-                    "rating must be between " + MIN_RATING + " and " + MAX_RATING + ", was " + value);
+                    "Puan " + MIN_RATING + " ile " + MAX_RATING + " arasında olmalı, gelen: " + value);
         }
     }
 
     private static void validateComment(String value) {
         if (value != null && value.length() > MAX_COMMENT_LENGTH) {
             throw new IllegalArgumentException(
-                    "comment must be at most " + MAX_COMMENT_LENGTH + " characters");
+                    "Yorum en fazla " + MAX_COMMENT_LENGTH + " karakter olabilir");
         }
     }
 
     private static void requireNotBlank(String value, String name) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(name + " must not be blank");
+            throw new IllegalArgumentException(name + " boş olamaz");
         }
     }
 

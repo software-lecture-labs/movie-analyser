@@ -1,6 +1,7 @@
 package com.movieanalyser.service;
 
 import com.movieanalyser.entity.Review;
+import jakarta.data.page.Page;
 
 /**
  * Yorum ekleme, değiştirme ve silme. Her değişiklik, filmin ortalama puanını ve
@@ -31,4 +32,25 @@ public interface ReviewService {
      * @throws com.movieanalyser.exception.ResourceNotFoundException id hatalı biçimdeyse veya yorum yoksa
      */
     void deleteReview(String reviewId);
+
+    /**
+     * @throws com.movieanalyser.exception.ResourceNotFoundException id bozuksa ya da yorum yoksa
+     */
+    Review getReview(String reviewId);
+
+    /**
+     * Bir filmin yorumları, en yeniden eskiye, sayfa sayfa.
+     *
+     * @throws com.movieanalyser.exception.ResourceNotFoundException film id'si bozuksa
+     * @throws com.movieanalyser.exception.BusinessRuleException sayfa bilgisi geçersizse
+     */
+    Page<Review> listByMovie(String movieId, int page, int size);
+
+    /**
+     * Bir kullanıcının yorumları, en yeniden eskiye, sayfa sayfa.
+     *
+     * @throws com.movieanalyser.exception.ResourceNotFoundException kullanıcı id'si bozuksa
+     * @throws com.movieanalyser.exception.BusinessRuleException sayfa bilgisi geçersizse
+     */
+    Page<Review> listByUser(String userId, int page, int size);
 }

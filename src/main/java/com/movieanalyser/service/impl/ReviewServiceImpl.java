@@ -6,7 +6,10 @@ import com.movieanalyser.exception.BusinessRuleException;
 import com.movieanalyser.exception.ResourceNotFoundException;
 import com.movieanalyser.repository.ReviewRepository;
 import com.movieanalyser.repository.ReviewTransactionRepository;
+import com.movieanalyser.service.MovieService;
 import com.movieanalyser.service.ReviewService;
+import jakarta.data.page.Page;
+import jakarta.data.page.PageRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Clock;
@@ -21,12 +24,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     private ReviewTransactionRepository transactions;
     private ReviewRepository reviews;
+    private MovieService movies;
     private Clock clock;
 
     @Inject
-    public ReviewServiceImpl(ReviewTransactionRepository transactions, ReviewRepository reviews, Clock clock) {
+    public ReviewServiceImpl(ReviewTransactionRepository transactions, ReviewRepository reviews,
+                             MovieService movies, Clock clock) {
         this.transactions = transactions;
         this.reviews = reviews;
+        this.movies = movies;
         this.clock = clock;
     }
 
@@ -37,8 +43,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review addReview(String userId, String movieId, int rating, String comment) {
-        requireValidId(userId, "User");
-        requireValidId(movieId, "Movie");
+        requireValidId(userId, "Kullanıcı");
+        requireValidId(movieId, "Film");
         Review review = applyRules(() -> Review.create(userId, movieId, rating, comment, clock.instant()));
 
         String id = transactions.add(review);
@@ -48,9 +54,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review updateReview(String reviewId, int rating, String comment) {
-        requireValidId(reviewId, "Review");
+        requireValidId(reviewId, "Yorum");
         Review review = reviews.findById(reviewId)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
+                .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: " + reviewId));
         applyRules(() -> {
             review.edit(rating, comment, clock.instant());
             return review;
@@ -62,14 +68,36 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(String reviewId) {
-        requireValidId(reviewId, "Review");
+        requireValidId(reviewId, "Yorum");
         transactions.delete(reviewId);
+    }
+
+    @Override
+    public Review getReview(String reviewId) {
+        requireValidId(reviewId, "Yorum");
+        return reviews.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Yorum bulunamadı: " + reviewId));
+    }
+
+    @Override
+    public Page<Review> listByMovie(String movieId, int page, int size) {
+        requireValidId(movieId, "Film");
+        PageRequest request = Paging.of(page, size);
+        // Olmayan bir filmin yorumları istenirse boş liste değil 404 dönsün
+        movies.getMovie(movieId);
+        return reviews.findByMovieIdOrderByCreatedAtDescIdDesc(movieId, request);
+    }
+
+    @Override
+    public Page<Review> listByUser(String userId, int page, int size) {
+        requireValidId(userId, "Kullanıcı");
+        return reviews.findByUserIdOrderByCreatedAtDescIdDesc(userId, Paging.of(page, size));
     }
 
     /** Hatalı biçimli bir id hiçbir kayıtlı entity'ye ait olamaz; bu yüzden "bulunamadı" olarak bildirilir. */
     private static void requireValidId(String id, String entityName) {
         if (!EntityIds.isValid(id)) {
-            throw new ResourceNotFoundException(entityName + " not found: " + id);
+            throw new ResourceNotFoundException(entityName + " bulunamadı: " + id);
         }
     }
 
